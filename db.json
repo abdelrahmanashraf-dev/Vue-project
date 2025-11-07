@@ -1,0 +1,246 @@
+{
+"authors": [
+{
+    "id": 1,
+    "name": "Brandon Sanderson",
+    "bio": "American author of epic fantasy and science fiction.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Brandon_Sanderson_signing_books_%282017%29.jpg"
+},
+{
+    "id": 2,
+    "name": "Agatha Christie",
+    "bio": "English writer known for her detective novels.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Agatha_Christie.png"
+},
+{
+    "id": 3,
+    "name": "George R. R. Martin",
+    "bio": "Author of A Song of Ice and Fire series.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/George_R._R._Martin_by_Gage_Skidmore_2.jpg"
+},
+{
+    "id": 4,
+    "name": "J.K. Rowling",
+    "bio": "British author, best known for the Harry Potter series.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/J._K._Rowling_2010.jpg"
+},
+{
+    "id": 5,
+    "name": "Stephen King",
+    "bio": "American author of horror, supernatural fiction, suspense, and fantasy novels.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Stephen_King%2C_Comicon.jpg"
+},
+{
+    "id": 6,
+    "name": "J.R.R. Tolkien",
+    "bio": "English writer, poet, philologist, and academic, best known for The Lord of the Rings.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Tolkien_1916.jpg"
+},
+{
+    "id": 7,
+    "name": "Neil Gaiman",
+    "bio": "English author of short fiction, novels, comic books, and films.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Neil_Gaiman_%282017%29.jpg"
+},
+{
+    "id": 8,
+    "name": "Dan Brown",
+    "bio": "American author best known for thriller novels.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Dan_Brown_2017.jpg"
+},
+{
+    "id": 9,
+    "name": "Suzanne Collins",
+    "bio": "American television writer and author, best known for The Hunger Games trilogy.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Suzanne_Collins_2010.jpg"
+},
+{
+    "id": 10,
+    "name": "Haruki Murakami",
+    "bio": "Japanese writer known for his surreal and melancholic fiction.",
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Haruki_Murakami%2C_2016.jpg"
+}
+],
+"books": [
+{
+    "id": 1,
+    "title": "Mistborn",
+    "authorId": 1,
+    "year": 2006,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91+LJ8A4tkL._AC_UF894,1000_QL80_.jpg",
+    "description": "An epic fantasy novel set in a world ruled by the immortal Lord Ruler."
+},
+{
+    "id": 2,
+    "title": "The Way of Kings",
+    "authorId": 1,
+    "year": 2010,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91zK1cQxUjL._AC_UF894,1000_QL80_.jpg",
+    "description": "The first book in The Stormlight Archive series, full of political intrigue and war."
+},
+{
+    "id": 3,
+    "title": "Words of Radiance",
+    "authorId": 1,
+    "year": 2014,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81WfZtNf+DL._AC_UF1000,1000_QL80_.jpg",
+    "description": "Continuation of The Stormlight Archive story with deeper character arcs."
+},
+{
+    "id": 4,
+    "title": "Murder on the Orient Express",
+    "authorId": 2,
+    "year": 1934,
+    "tags": ["Mystery"],
+    "coverUrl": "https://m.media-amazon.com/images/I/71yEoJQ2Z0L._AC_UF894,1000_QL80_.jpg",
+    "description": "Detective Hercule Poirot investigates a murder on a train."
+},
+{
+    "id": 5,
+    "title": "And Then There Were None",
+    "authorId": 2,
+    "year": 1939,
+    "tags": ["Mystery"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81F1m3ffg8L._AC_UF894,1000_QL80_.jpg",
+    "description": "Ten strangers are invited to a remote island where a murder mystery unfolds."
+},
+{
+    "id": 6,
+    "title": "A Game of Thrones",
+    "authorId": 3,
+    "year": 1996,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91dSMhdIzTL._AC_UF894,1000_QL80_.jpg",
+    "description": "Noble families vie for control of the Iron Throne in the Seven Kingdoms."
+},
+{
+    "id": 7,
+    "title": "A Clash of Kings",
+    "authorId": 3,
+    "year": 1998,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91PYZcNKXRL._AC_UF894,1000_QL80_.jpg",
+    "description": "The sequel to A Game of Thrones, filled with battles and betrayal."
+},
+{
+    "id": 8,
+    "title": "Harry Potter and the Sorcerer’s Stone",
+    "authorId": 4,
+    "year": 1997,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81YOuOGFCJL._AC_UF894,1000_QL80_.jpg",
+    "description": "The story of a young wizard discovering his magical heritage."
+},
+{
+    "id": 9,
+    "title": "Harry Potter and the Chamber of Secrets",
+    "authorId": 4,
+    "year": 1998,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91OINeHnJGL._AC_UF894,1000_QL80_.jpg",
+    "description": "Harry’s second year at Hogwarts brings new mysteries."
+},
+{
+    "id": 10,
+    "title": "The Shining",
+    "authorId": 5,
+    "year": 1977,
+    "tags": ["Horror"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81KkM92+8pL._AC_UF894,1000_QL80_.jpg",
+    "description": "A psychological horror about isolation and madness."
+},
+{
+    "id": 11,
+    "title": "It",
+    "authorId": 5,
+    "year": 1986,
+    "tags": ["Horror"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81Aq1Uuo0tL._AC_UF894,1000_QL80_.jpg",
+    "description": "A group of friends face an ancient evil that resurfaces every 27 years."
+},
+{
+    "id": 12,
+    "title": "The Fellowship of the Ring",
+    "authorId": 6,
+    "year": 1954,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91dSMhdIzTL._AC_UF894,1000_QL80_.jpg",
+    "description": "The first part of The Lord of the Rings trilogy."
+},
+{
+    "id": 13,
+    "title": "The Two Towers",
+    "authorId": 6,
+    "year": 1954,
+    "tags": ["Fantasy"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81t2CVWEsUL._AC_UF894,1000_QL80_.jpg",
+    "description": "The Fellowship is scattered, and war looms over Middle-earth."
+},
+{
+    "id": 14,
+    "title": "Coraline",
+    "authorId": 7,
+    "year": 2002,
+    "tags": ["Fantasy", "Horror"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91O3p24O1mL._AC_UF894,1000_QL80_.jpg",
+    "description": "A girl discovers a parallel world that mirrors her own but hides dark secrets."
+},
+{
+    "id": 15,
+    "title": "American Gods",
+    "authorId": 7,
+    "year": 2001,
+    "tags": ["Fantasy", "Mythology"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81R7v3bN5hL._AC_UF894,1000_QL80_.jpg",
+    "description": "A man becomes entangled in a war between old and new gods."
+},
+{
+    "id": 16,
+    "title": "The Da Vinci Code",
+    "authorId": 8,
+    "year": 2003,
+    "tags": ["Thriller"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91Q5dCjc2KL._AC_UF894,1000_QL80_.jpg",
+    "description": "A symbologist uncovers a secret that could shake Christianity."
+},
+{
+    "id": 17,
+    "title": "Inferno",
+    "authorId": 8,
+    "year": 2013,
+    "tags": ["Thriller"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91bYsX41DVL._AC_UF894,1000_QL80_.jpg",
+    "description": "Robert Langdon races against time to stop a deadly global plot."
+},
+{
+    "id": 18,
+    "title": "The Hunger Games",
+    "authorId": 9,
+    "year": 2008,
+    "tags": ["Dystopian", "Adventure"],
+    "coverUrl": "https://m.media-amazon.com/images/I/91qvZk3MQiL._AC_UF894,1000_QL80_.jpg",
+    "description": "A dystopian world where teens must fight to the death for survival."
+},
+{
+    "id": 19,
+    "title": "Catching Fire",
+    "authorId": 9,
+    "year": 2009,
+    "tags": ["Dystopian", "Adventure"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81WcZp+eHgL._AC_UF894,1000_QL80_.jpg",
+    "description": "Katniss returns to the Hunger Games as rebellion brews."
+},
+{
+    "id": 20,
+    "title": "Kafka on the Shore",
+    "authorId": 10,
+    "year": 2002,
+    "tags": ["Magical Realism"],
+    "coverUrl": "https://m.media-amazon.com/images/I/81zV6ZV6OJL._AC_UF894,1000_QL80_.jpg",
+    "description": "A surreal coming-of-age story blending dreams, cats, and metaphysics."
+}
+]
+}
