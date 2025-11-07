@@ -98,7 +98,8 @@ const router = createRouter({
     name: 'admin-authors-edit',
     component: AuthorsFormView,
     meta: { title: 'Edit Author', requiresAuth: true }
-  },
+    },
+  
 
   
   ],
