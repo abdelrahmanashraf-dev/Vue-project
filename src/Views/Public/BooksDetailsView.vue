@@ -5,67 +5,60 @@ import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
-
+const book = ref({})
 const author = ref({})
-const relatedAuthors = ref([])
+const relatedBooks = ref([])
+
 const isDark = ref(true)
 const loading = ref(true)
 
-// Fetch data for current author
-const fetchData = async (authorId) => {
-  loading.value = true
-  author.value = {}
-  relatedAuthors.value = []
-
-  try {
-    const resAuthor = await axios.get(`http://localhost:3000/authors/${authorId}`)
-    author.value = resAuthor.data
-
-    const resOtherAuthors = await axios.get(`http://localhost:3000/authors?_limit=6`)
-    relatedAuthors.value = resOtherAuthors.data.filter(a => a.id != authorId)
-  } catch (error) {
-    console.error('Error fetching data:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-// Theme
 const updateTheme = () => {
   const saved = document.documentElement.getAttribute('data-theme')
   isDark.value = saved === 'dark'
 }
 
-// Navigate to another author
-const goToAuthor = (id) => {
-  if (route.params.id != id) {
-    router.replace({ name: 'author-details', params: { id } })
+const fetchData = async (id) => {
+  loading.value = true
+  try {
+    const resBook = await axios.get(`http://localhost:3000/books/${id}`)
+    book.value = resBook.data
+
+    if (book.value.authorId) {
+      const resAuthor = await axios.get(`http://localhost:3000/authors/${book.value.authorId}`)
+      author.value = resAuthor.data
+    }
+
+    const resRelatedBooks = await axios.get(`http://localhost:3000/books?_limit=6`)
+    relatedBooks.value = resRelatedBooks.data.filter(b => b.id !== id)
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loading.value = false
   }
 }
 
-// Mounted
-onMounted(() => {
-  if (!document.documentElement.getAttribute('data-theme')) {
-    document.documentElement.setAttribute('data-theme', 'dark')
-  }
-  updateTheme()
-  fetchData(route.params.id)
-})
+const goToBook = (id) => {
+  if (id !== route.params.id) router.push({ name: 'book-details', params: { id } })
+}
+const goToAuthor = (id) => {
+  router.push({ name: 'author-details', params: { id } })
+}
 
-// Watch route param to fetch new data when ID changes
-watch(() => route.params.id, (newId) => {
-  fetchData(newId)
-})
-
-// Theme observer for dynamic changes
 const themeObserver = () => {
-  const observer = new MutationObserver(() => updateTheme())
+  const observer = new MutationObserver(updateTheme)
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 }
 
 onMounted(() => {
+  if (!document.documentElement.getAttribute('data-theme'))
+    document.documentElement.setAttribute('data-theme', 'dark')
+
+  updateTheme()
+  fetchData(route.params.id)
   themeObserver()
 })
+
+watch(() => route.params.id, fetchData)
 </script>
 
 <template>
@@ -73,53 +66,69 @@ onMounted(() => {
      :class="isDark ? 'bg-base-100 text-base-content' : 'bg-base-100 text-base-content'"
      class="min-h-screen font-sans">
 
-  <!-- Loading Spinner -->
+  <!-- Loading -->
   <div v-if="loading" class="flex justify-center items-center h-96">
     <span :class="isDark ? 'text-white' : 'text-gray-900'">Loading...</span>
   </div>
 
-  <!-- Author Details -->
+  <!-- Book Details -->
   <section v-else class="container mx-auto px-6 py-12">
     <div :class="isDark
           ? 'bg-base-100 text-base-content border-gray-700'
           : 'bg-base-100 text-base-content border-gray-200'"
          class="lg:flex shadow-xl rounded-2xl overflow-hidden border">
       
-      <!-- Author Avatar -->
+      <!-- Book Cover -->
       <figure class="w-full lg:w-1/3 bg-base-200">
-        <img :src="author.avatarUrl" alt="Author photo"
+        <img :src="book.coverUrl" alt="Book cover"
              class="object-cover w-full h-full transition-transform duration-300 hover:scale-105"/>
       </figure>
 
-      <!-- Author Info -->
+      <!-- Book Info -->
       <div class="p-6 lg:w-2/3 flex flex-col justify-between">
         <div>
-          <h2 class="text-3xl font-bold mb-2 text-primary">{{ author.name }}</h2>
-          <p class="leading-relaxed mb-6">{{ author.bio }}</p>
+          <h2 class="text-3xl font-bold mb-2 text-primary">{{ book.title }}</h2>
+          <p class="leading-relaxed mb-6">{{ book.description }}</p>
+
+          <ul class="space-y-2 text-sm mb-6">
+            <li>
+              <span class="font-semibold text-secondary">✍️ Author:</span>
+              <span v-if="author.name" class="ml-1 text-secondary hover:text-primary cursor-pointer" @click="goToAuthor(author.id)">
+                {{ author.name }}
+              </span>
+            </li>
+            <li>
+              <span class="font-semibold text-secondary">📅 Published:</span> {{ book.year }}
+            </li>
+          </ul>
         </div>
 
         <div class="flex gap-3 flex-wrap mt-4">
-          <router-link to="/authors"
+          <button class="bg-primary hover:bg-primary-focus text-white shadow-md px-4 py-2 rounded-lg transition-colors duration-300">
+            💖 Add to Wishlist
+          </button>
+          <router-link to="/books" 
                        class="border border-primary text-primary hover:bg-primary/10 px-4 py-2 rounded-lg transition-colors duration-300">
-            ⬅ Back to Authors
+            ⬅ Back to Books
           </router-link>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Related Authors Section -->
-  <section v-if="!loading && relatedAuthors.length" class="container mx-auto px-6 py-12">
-    <h2 class="text-2xl font-bold mb-6 text-primary">Other Authors</h2>
+  <!-- Related Books -->
+  <section v-if="relatedBooks.length" class="container mx-auto px-6 py-12">
+    <h2 class="text-2xl font-bold mb-6 text-primary">You May Also Like</h2>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-      <div v-for="other in relatedAuthors" :key="other.id"
-           @click="goToAuthor(other.id)"
+      <div v-for="b in relatedBooks" :key="b.id"
+           @click="goToBook(b.id)"
            class="cursor-pointer card card-compact shadow-lg rounded-xl hover:scale-105 transition-transform bg-base-100">
         <figure class="h-40 overflow-hidden">
-          <img :src="other.avatarUrl" alt="Author" class="object-cover w-full h-full"/>
+          <img :src="b.coverUrl" alt="Book cover" class="object-cover w-full h-full"/>
         </figure>
         <div class="card-body p-3 text-center">
-          <h3 class="font-semibold text-sm truncate">{{ other.name }}</h3>
+          <h3 class="font-semibold text-sm truncate">{{ b.title }}</h3>
+          <p v-if="b.authorName" class="text-sm mt-1 text-secondary">{{ b.authorName }}</p>
         </div>
       </div>
     </div>
