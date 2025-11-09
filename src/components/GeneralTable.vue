@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Toast from '@/components/Ui/Toast.vue'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
   // Store instance (useBooksStore or useAuthorsStore)

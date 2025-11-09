@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Toast from '@/components/Ui/Toast.vue'
+import AdminLayout from '../Layouts/AdminLayout.vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -144,6 +145,12 @@ const loadItem = async () => {
           form.value[field.key] = item[field.key]
         }
       })
+      
+      // Validate all fields after loading to clear any errors
+      // This ensures the form is valid when loaded with existing data
+      await Promise.all(
+        props.config.fields.map(field => validateField(field))
+      )
     }
   } catch (error) {
     showToast(`Failed to load ${props.config.entityName.toLowerCase()}`, 'error')
@@ -290,10 +297,37 @@ const removeTag = (field, index) => {
 
 // Form validity
 const isFormValid = computed(() => {
+  // Check all required fields have values
   for (const field of props.config.fields) {
-    if (field.required && !form.value[field.key]) return false
-    if (errors.value[field.key]) return false
+    const value = form.value[field.key]
+    
+    // Required field validation
+    if (field.required) {
+      if (!value || (Array.isArray(value) && value.length === 0)) {
+        return false
+      }
+    }
+    
+    // Check for errors
+    if (errors.value[field.key]) {
+      return false
+    }
+    
+    // Basic length validations for text fields
+    if ((field.type === 'text' || field.type === 'textarea') && value) {
+      if (field.minLength && value.length < field.minLength) return false
+      if (field.maxLength && value.length > field.maxLength) return false
+    }
+    
+    // Number range validation
+    if (field.type === 'number' && value) {
+      const min = field.min
+      const max = typeof field.max === 'function' ? field.max() : field.max
+      if (min !== undefined && value < min) return false
+      if (max !== undefined && value > max) return false
+    }
   }
+  
   return true
 })
 
@@ -602,7 +636,7 @@ const closeToast = () => {
         </div>
 
         <!-- Validation Warning -->
-        <div v-if="!isFormValid" class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
+        <div v-if="!isFormValid && !isEditMode" class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
           <p class="text-sm text-yellow-700 dark:text-yellow-400">
             Please fill in all required fields marked with <span class="text-red-500">*</span>
           </p>
