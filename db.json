@@ -1,246 +1,797 @@
 {
-"authors": [
-{
-    "id": 1,
-    "name": "Brandon Sanderson",
-    "bio": "American author of epic fantasy and science fiction.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Brandon_Sanderson_signing_books_%282017%29.jpg"
-},
-{
-    "id": 2,
-    "name": "Agatha Christie",
-    "bio": "English writer known for her detective novels.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Agatha_Christie.png"
-},
-{
-    "id": 3,
-    "name": "George R. R. Martin",
-    "bio": "Author of A Song of Ice and Fire series.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/George_R._R._Martin_by_Gage_Skidmore_2.jpg"
-},
-{
-    "id": 4,
-    "name": "J.K. Rowling",
-    "bio": "British author, best known for the Harry Potter series.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/J._K._Rowling_2010.jpg"
-},
-{
-    "id": 5,
-    "name": "Stephen King",
-    "bio": "American author of horror, supernatural fiction, suspense, and fantasy novels.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Stephen_King%2C_Comicon.jpg"
-},
-{
-    "id": 6,
-    "name": "J.R.R. Tolkien",
-    "bio": "English writer, poet, philologist, and academic, best known for The Lord of the Rings.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Tolkien_1916.jpg"
-},
-{
-    "id": 7,
-    "name": "Neil Gaiman",
-    "bio": "English author of short fiction, novels, comic books, and films.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Neil_Gaiman_%282017%29.jpg"
-},
-{
-    "id": 8,
-    "name": "Dan Brown",
-    "bio": "American author best known for thriller novels.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Dan_Brown_2017.jpg"
-},
-{
-    "id": 9,
-    "name": "Suzanne Collins",
-    "bio": "American television writer and author, best known for The Hunger Games trilogy.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Suzanne_Collins_2010.jpg"
-},
-{
-    "id": 10,
-    "name": "Haruki Murakami",
-    "bio": "Japanese writer known for his surreal and melancholic fiction.",
-    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Haruki_Murakami%2C_2016.jpg"
-}
-],
-"books": [
-{
-    "id": 1,
-    "title": "Mistborn",
-    "authorId": 1,
-    "year": 2006,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91+LJ8A4tkL._AC_UF894,1000_QL80_.jpg",
-    "description": "An epic fantasy novel set in a world ruled by the immortal Lord Ruler."
-},
-{
-    "id": 2,
-    "title": "The Way of Kings",
-    "authorId": 1,
-    "year": 2010,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91zK1cQxUjL._AC_UF894,1000_QL80_.jpg",
-    "description": "The first book in The Stormlight Archive series, full of political intrigue and war."
-},
-{
-    "id": 3,
-    "title": "Words of Radiance",
-    "authorId": 1,
-    "year": 2014,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81WfZtNf+DL._AC_UF1000,1000_QL80_.jpg",
-    "description": "Continuation of The Stormlight Archive story with deeper character arcs."
-},
-{
-    "id": 4,
-    "title": "Murder on the Orient Express",
-    "authorId": 2,
-    "year": 1934,
-    "tags": ["Mystery"],
-    "coverUrl": "https://m.media-amazon.com/images/I/71yEoJQ2Z0L._AC_UF894,1000_QL80_.jpg",
-    "description": "Detective Hercule Poirot investigates a murder on a train."
-},
-{
-    "id": 5,
-    "title": "And Then There Were None",
-    "authorId": 2,
-    "year": 1939,
-    "tags": ["Mystery"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81F1m3ffg8L._AC_UF894,1000_QL80_.jpg",
-    "description": "Ten strangers are invited to a remote island where a murder mystery unfolds."
-},
-{
-    "id": 6,
-    "title": "A Game of Thrones",
-    "authorId": 3,
-    "year": 1996,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91dSMhdIzTL._AC_UF894,1000_QL80_.jpg",
-    "description": "Noble families vie for control of the Iron Throne in the Seven Kingdoms."
-},
-{
-    "id": 7,
-    "title": "A Clash of Kings",
-    "authorId": 3,
-    "year": 1998,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91PYZcNKXRL._AC_UF894,1000_QL80_.jpg",
-    "description": "The sequel to A Game of Thrones, filled with battles and betrayal."
-},
-{
-    "id": 8,
-    "title": "Harry Potter and the Sorcerer’s Stone",
-    "authorId": 4,
-    "year": 1997,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81YOuOGFCJL._AC_UF894,1000_QL80_.jpg",
-    "description": "The story of a young wizard discovering his magical heritage."
-},
-{
-    "id": 9,
-    "title": "Harry Potter and the Chamber of Secrets",
-    "authorId": 4,
-    "year": 1998,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91OINeHnJGL._AC_UF894,1000_QL80_.jpg",
-    "description": "Harry’s second year at Hogwarts brings new mysteries."
-},
-{
-    "id": 10,
-    "title": "The Shining",
-    "authorId": 5,
-    "year": 1977,
-    "tags": ["Horror"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81KkM92+8pL._AC_UF894,1000_QL80_.jpg",
-    "description": "A psychological horror about isolation and madness."
-},
-{
-    "id": 11,
-    "title": "It",
-    "authorId": 5,
-    "year": 1986,
-    "tags": ["Horror"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81Aq1Uuo0tL._AC_UF894,1000_QL80_.jpg",
-    "description": "A group of friends face an ancient evil that resurfaces every 27 years."
-},
-{
-    "id": 12,
-    "title": "The Fellowship of the Ring",
-    "authorId": 6,
-    "year": 1954,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91dSMhdIzTL._AC_UF894,1000_QL80_.jpg",
-    "description": "The first part of The Lord of the Rings trilogy."
-},
-{
-    "id": 13,
-    "title": "The Two Towers",
-    "authorId": 6,
-    "year": 1954,
-    "tags": ["Fantasy"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81t2CVWEsUL._AC_UF894,1000_QL80_.jpg",
-    "description": "The Fellowship is scattered, and war looms over Middle-earth."
-},
-{
-    "id": 14,
-    "title": "Coraline",
-    "authorId": 7,
-    "year": 2002,
-    "tags": ["Fantasy", "Horror"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91O3p24O1mL._AC_UF894,1000_QL80_.jpg",
-    "description": "A girl discovers a parallel world that mirrors her own but hides dark secrets."
-},
-{
-    "id": 15,
-    "title": "American Gods",
-    "authorId": 7,
-    "year": 2001,
-    "tags": ["Fantasy", "Mythology"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81R7v3bN5hL._AC_UF894,1000_QL80_.jpg",
-    "description": "A man becomes entangled in a war between old and new gods."
-},
-{
-    "id": 16,
-    "title": "The Da Vinci Code",
-    "authorId": 8,
-    "year": 2003,
-    "tags": ["Thriller"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91Q5dCjc2KL._AC_UF894,1000_QL80_.jpg",
-    "description": "A symbologist uncovers a secret that could shake Christianity."
-},
-{
-    "id": 17,
-    "title": "Inferno",
-    "authorId": 8,
-    "year": 2013,
-    "tags": ["Thriller"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91bYsX41DVL._AC_UF894,1000_QL80_.jpg",
-    "description": "Robert Langdon races against time to stop a deadly global plot."
-},
-{
-    "id": 18,
-    "title": "The Hunger Games",
-    "authorId": 9,
-    "year": 2008,
-    "tags": ["Dystopian", "Adventure"],
-    "coverUrl": "https://m.media-amazon.com/images/I/91qvZk3MQiL._AC_UF894,1000_QL80_.jpg",
-    "description": "A dystopian world where teens must fight to the death for survival."
-},
-{
-    "id": 19,
-    "title": "Catching Fire",
-    "authorId": 9,
-    "year": 2009,
-    "tags": ["Dystopian", "Adventure"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81WcZp+eHgL._AC_UF894,1000_QL80_.jpg",
-    "description": "Katniss returns to the Hunger Games as rebellion brews."
-},
-{
-    "id": 20,
-    "title": "Kafka on the Shore",
-    "authorId": 10,
-    "year": 2002,
-    "tags": ["Magical Realism"],
-    "coverUrl": "https://m.media-amazon.com/images/I/81zV6ZV6OJL._AC_UF894,1000_QL80_.jpg",
-    "description": "A surreal coming-of-age story blending dreams, cats, and metaphysics."
-}
-]
+  "authors": [
+    {
+      "id": "1",
+      "name": "Ahmed Mourad",
+      "bio": "Egyptian novelist and screenwriter known for his thrilling crime and mystery novels.",
+      "avatarUrl": "/images/Ahmed Mourad.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "name": "Nabil Farouk",
+      "bio": "Egyptian novelist and physician, best known for his Ragol Al Mostaheel spy series and science fiction works.",
+      "avatarUrl": "/images/Nabil Farouk.jpeg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "3",
+      "name": "Naguib Mahfouz",
+      "bio": "Nobel Prize-winning Egyptian writer regarded as one of the first contemporary writers of Arabic literature.",
+      "avatarUrl": "/images/Naguib Mahfouz.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "4",
+      "name": "Alaa Al Aswany",
+      "bio": "Egyptian writer and novelist known for his critical portrayals of contemporary Egyptian society.",
+      "avatarUrl": "/images/Alaa Alaswany.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "5",
+      "name": "Youssef Ziedan",
+      "bio": "Egyptian scholar and novelist specializing in Arabic and Islamic studies.",
+      "avatarUrl": "/images/Youssef_Ziedan.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "6",
+      "name": "Ahmed Khaled Tawfik",
+      "bio": "Egyptian author and physician, pioneer of Arabic horror and science fiction writing.",
+      "avatarUrl": "/images/Ahmed Khaled Tawfik.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "7",
+      "name": "Mohamed Sadek",
+      "bio": "Egyptian novelist known for romantic and contemporary fiction, author of the bestselling novel Hepta.",
+      "avatarUrl": "/images/Mohamed Sadek.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "8",
+      "name": "Agatha Christie",
+      "bio": "English writer known as the Queen of Mystery, creator of Hercule Poirot and Miss Marple.",
+      "avatarUrl": "/images/agatha-christie-.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "9",
+      "name": "Stephen King",
+      "bio": "American author known as the King of Horror, master of suspense and supernatural fiction.",
+      "avatarUrl": "/images/Stephen+King+square-2.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "10",
+      "name": "Ihsan Abdel Quddous",
+      "bio": "Egyptian writer, novelist, and journalist known for his romantic novels and social commentary.",
+      "avatarUrl": "/images/Ihsan Abdel Quodos.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "11",
+      "name": "J.K. Rowling",
+      "bio": "British author best known for the Harry Potter fantasy series, one of the best-selling book series in history.",
+      "avatarUrl": "/images/jkrowling.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "12",
+      "name": "Dan Brown",
+      "bio": "American author of thriller novels, best known for The Da Vinci Code and Robert Langdon series.",
+      "avatarUrl": "/images/dan-brown.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "13",
+      "name": "George R.R. Martin",
+      "bio": "American novelist and screenwriter, author of the epic fantasy series A Song of Ice and Fire.",
+      "avatarUrl": "/images/George R.R. Martin.jpg",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    }
+  ],
+  "books": [
+    {
+      "id": "1",
+      "title": "Vertigo",
+      "authorId": 1,
+      "year": 2007,
+      "tags": [
+        "Mystery",
+        "Thriller"
+      ],
+      "coverUrl": "/images/vertigo.jpg",
+      "description": "A gripping psychological thriller about a photographer who witnesses a murder in a high-class Cairo nightclub.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Diamond Dust",
+      "authorId": 1,
+      "year": 2010,
+      "tags": [
+        "Crime",
+        "Thriller"
+      ],
+      "coverUrl": "/images/Bariq Al-Mas9.jpg",
+      "description": "A pharmacist's life changes dramatically after his father is murdered and he discovers his father's diary revealing dark secrets from the past.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "3",
+      "title": "The Blue Elephant",
+      "authorId": 1,
+      "year": 2012,
+      "tags": [
+        "Mystery",
+        "Psychological"
+      ],
+      "coverUrl": "/images/The blue elephant.jpg",
+      "description": "A psychiatrist is drawn into a dangerous mystery when he tries to treat a mysterious patient in a mental hospital.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "1919",
+      "authorId": 1,
+      "year": 2014,
+      "tags": [
+        "Historical",
+        "Thriller"
+      ],
+      "coverUrl": "/images/1919.jpg",
+      "description": "Set during the 1919 Egyptian revolution, following a man searching for his missing brother.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "5",
+      "title": "The Land of God",
+      "authorId": 1,
+      "year": 2016,
+      "tags": [
+        "Historical",
+        "Fiction"
+      ],
+      "coverUrl": "/images/land.jpg",
+      "description": "A story set in Ancient Egypt between the era of the 18th dynasty and the time of Ptolemy II.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "6",
+      "title": "Locanda Bir Al-Watawit",
+      "authorId": 1,
+      "year": 2020,
+      "tags": [
+        "Mystery",
+        "Thriller"
+      ],
+      "coverUrl": "/images/Locanda Bir Al-Watawit.jpg",
+      "description": "A detective story featuring a paranoid detective investigating mysterious events.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "7",
+      "title": "Sphinx",
+      "authorId": 1,
+      "year": 2023,
+      "tags": [
+        "Mystery",
+        "Historical"
+      ],
+      "coverUrl": "/images/Sphinx.jpg",
+      "description": "A thrilling adventure set in 1869 featuring the same detective from Locanda Bir Al-Watawit.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "8",
+      "title": "The Mysterious Disappearance",
+      "authorId": 2,
+      "year": 1984,
+      "tags": [
+        "Spy",
+        "Action"
+      ],
+      "coverUrl": "/images/The Mysterious Disappearance.jpg",
+      "description": "First book in the Ragol Al Mostaheel series featuring Egyptian superspy Adham Sabri.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "9",
+      "title": "The Death Race",
+      "authorId": 2,
+      "year": 1984,
+      "tags": [
+        "Spy",
+        "Action"
+      ],
+      "coverUrl": "/images/The Death Race7.jpg",
+      "description": "Adham Sabri faces a deadly race against time in this thrilling espionage adventure.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "10",
+      "title": "Malaf Al Mostakbal",
+      "authorId": 2,
+      "year": 1979,
+      "tags": [
+        "Science Fiction"
+      ],
+      "coverUrl": "/images/fututre.jpg",
+      "description": "The first book in The Future File series, exploring futuristic science fiction themes.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "11",
+      "title": "Bariq Al-Mas (Diamond Sparkle)",
+      "authorId": 2,
+      "year": 1988,
+      "tags": [
+        "Spy",
+        "Action",
+        "Adventure"
+      ],
+      "coverUrl": "/images/Bariq Al-Mas9.jpg",
+      "description": "Adham Sabri embarks on a dangerous mission to uncover the secret behind a mysterious international diamond smuggling network.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "12",
+      "title": "Qenaa Al-Khatar (Mask of Danger)",
+      "authorId": 2,
+      "year": 1990,
+      "tags": [
+        "Spy",
+        "Thriller"
+      ],
+      "coverUrl": "/images/Qenaa Al-Khatar.jpg",
+      "description": "A thrilling adventure where Adham Sabri faces a deadly masked assassin working for an unknown international organization.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "13",
+      "title": "Saed Al-Gawasies (The Spy Hunter)",
+      "authorId": 2,
+      "year": 1992,
+      "tags": [
+        "Spy",
+        "Action",
+        "Suspense"
+      ],
+      "coverUrl": "/images/Saed Al-Gawasies.jpg",
+      "description": "Adham Sabri takes on one of his most challenging missions yet — tracking a rogue spy who threatens global security.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "14",
+      "title": "Palace Walk",
+      "authorId": 3,
+      "year": 1956,
+      "tags": [
+        "Historical",
+        "Drama"
+      ],
+      "coverUrl": "/images/palace-walk.webp",
+      "description": "First novel in the Cairo Trilogy, depicting a Cairo family's life in the 1920s.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "15",
+      "title": "Palace of Desire",
+      "authorId": 3,
+      "year": 1957,
+      "tags": [
+        "Historical",
+        "Drama"
+      ],
+      "coverUrl": "/images/Palace of Desire.jpg",
+      "description": "The second volume of the Cairo Trilogy following the family through political upheaval.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "16",
+      "title": "Children of Gebelawi",
+      "authorId": 3,
+      "year": 1959,
+      "tags": [
+        "Allegorical",
+        "Drama"
+      ],
+      "coverUrl": "/images/Children of Gebelawix.webp",
+      "description": "An allegorical novel exploring themes of religion, science, and human nature through generations of one family.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "17",
+      "title": "The Yacoubian Building",
+      "authorId": 4,
+      "year": 2002,
+      "tags": [
+        "Contemporary",
+        "Drama"
+      ],
+      "coverUrl": "/images/The Yacoubian Buildingx.webp",
+      "description": "A vivid portrait of modern Egyptian society through the residents of a Cairo apartment building.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "18",
+      "title": "Chicago",
+      "authorId": 4,
+      "year": 2007,
+      "tags": [
+        "Contemporary",
+        "Drama"
+      ],
+      "coverUrl": "/images/Chicagoo.jpg",
+      "description": "The lives of Egyptian expatriates in Chicago exploring identity and cultural conflict.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "19",
+      "title": "The Automobile Club of Egypt",
+      "authorId": 4,
+      "year": 2013,
+      "tags": [
+        "Historical",
+        "Drama"
+      ],
+      "coverUrl": "/images/The Automobile Club of Egypt.webp",
+      "description": "Set in 1950s Cairo, exploring class struggles and the relationship between servants and aristocracy.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "20",
+      "title": "The Republic of False Truths",
+      "authorId": 4,
+      "year": 2018,
+      "tags": [
+        "Political",
+        "Contemporary"
+      ],
+      "coverUrl": "/images/The Republic of False Truths.webp",
+      "description": "A novel set during the 2011 Egyptian revolution, examining the struggle between protesters and the regime.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "21",
+      "title": "The Trees Walk in Alexandria",
+      "authorId": 4,
+      "year": 2024,
+      "tags": [
+        "Historical",
+        "Drama"
+      ],
+      "coverUrl": "/images/the trees.jpg",
+      "description": "Set in 1960s Alexandria, exploring the experiences of Europeans facing discrimination under military rule.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "22",
+      "title": "Azazeel",
+      "authorId": 5,
+      "year": 2008,
+      "tags": [
+        "Historical",
+        "Religious"
+      ],
+      "coverUrl": "/images/Azazeel_.jpg",
+      "description": "A historical novel set in 5th century Egypt exploring early Christianity and religious conflicts.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "23",
+      "title": "Guantanamo",
+      "authorId": 5,
+      "year": 2013,
+      "tags": [
+        "Historical",
+        "Fiction"
+      ],
+      "coverUrl": "/images/Guantanamo.jpg",
+      "description": "A novel connecting ancient Egyptian wisdom with Renaissance Italy through a mysterious violin.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "24",
+      "title": "Utopia",
+      "authorId": 6,
+      "year": 2008,
+      "tags": [
+        "Dystopian",
+        "Science Fiction"
+      ],
+      "coverUrl": "/images/UtopiaA.jpg",
+      "description": "A dystopian novel depicting a future Egypt divided between the ultra-rich and the impoverished.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "25",
+      "title": "Ma Waraa Al Tabiaa",
+      "authorId": 6,
+      "year": 1993,
+      "tags": [
+        "Horror",
+        "Supernatural"
+      ],
+      "coverUrl": "/images/Ma Waraa Al Tabiaa.png",
+      "description": "The groundbreaking horror series that introduced supernatural fiction to Arab readers.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "26",
+      "title": "Safari",
+      "authorId": 6,
+      "year": 2000,
+      "tags": [
+        "Science Fiction",
+        "Adventure"
+      ],
+      "coverUrl": "/images/safari.jpg",
+      "description": "A science fiction series about time travel and adventure across different historical periods.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "27",
+      "title": "Taha Al-Gharib",
+      "authorId": 7,
+      "year": 2010,
+      "tags": [
+        "Contemporary",
+        "Drama"
+      ],
+      "coverUrl": "/images/Taha Elghariebs.jpeg",
+      "description": "Mohamed Sadek's first novel exploring contemporary Egyptian life.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "28",
+      "title": "A Few Hours in One Day",
+      "authorId": 7,
+      "year": 2012,
+      "tags": [
+        "Romance",
+        "Contemporary"
+      ],
+      "coverUrl": "/images/A Few Hours in One Day_.jpg",
+      "description": "A contemporary novel exploring relationships and life in modern Egypt.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "29",
+      "title": "Hepta",
+      "authorId": 7,
+      "year": 2014,
+      "tags": [
+        "Romance",
+        "Contemporary"
+      ],
+      "coverUrl": "/images/Hepta_.jpg",
+      "description": "A bestselling novel about the seven stages of love, adapted into a successful 2016 film.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "30",
+      "title": "Insta Life",
+      "authorId": 7,
+      "year": 2015,
+      "tags": [
+        "Contemporary",
+        "Social"
+      ],
+      "coverUrl": "/images/insta.jpeg",
+      "description": "A modern take on relationships and social media in contemporary Egyptian society.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "31",
+      "title": "El-Dama",
+      "authorId": 7,
+      "year": 2017,
+      "tags": [
+        "Contemporary",
+        "Drama"
+      ],
+      "coverUrl": "/images/eldama.jpeg",
+      "description": "A contemporary drama exploring complex human relationships.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "32",
+      "title": "Murder on the Orient Express",
+      "authorId": 8,
+      "year": 1934,
+      "tags": [
+        "Mystery",
+        "Crime"
+      ],
+      "coverUrl": "/images/murder_.jpg",
+      "description": "Detective Hercule Poirot investigates a murder aboard the famous Orient Express train.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "33",
+      "title": "And Then There Were None",
+      "authorId": 8,
+      "year": 1939,
+      "tags": [
+        "Mystery",
+        "Thriller"
+      ],
+      "coverUrl": "/images/And Then There Were Nonex.webp",
+      "description": "Ten strangers are lured to an isolated island where they are accused of murder and killed one by one.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "34",
+      "title": "Death on the Nile",
+      "authorId": 8,
+      "year": 1937,
+      "tags": [
+        "Mystery",
+        "Crime"
+      ],
+      "coverUrl": "/images/Death on the Nile_.jpg",
+      "description": "Hercule Poirot investigates a murder during a luxury cruise on the Nile River in Egypt.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "35",
+      "title": "The Shining",
+      "authorId": 9,
+      "year": 1977,
+      "tags": [
+        "Horror",
+        "Psychological"
+      ],
+      "coverUrl": "/images/the shinning.jpg",
+      "description": "A family heads to an isolated hotel for the winter where an evil presence influences the father into violence.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "36",
+      "title": "It",
+      "authorId": 9,
+      "year": 1986,
+      "tags": [
+        "Horror",
+        "Thriller"
+      ],
+      "coverUrl": "/images/It.webp",
+      "description": "A group of friends confront an ancient evil that preys on the children of their hometown.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "37",
+      "title": "The Stand",
+      "authorId": 9,
+      "year": 1978,
+      "tags": [
+        "Horror",
+        "Post-Apocalyptic"
+      ],
+      "coverUrl": "/images/The Stand.jpeg",
+      "description": "After a plague kills most of the world's population, the survivors face a battle between good and evil.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "38",
+      "title": "I Do Not Sleep",
+      "authorId": 10,
+      "year": 1957,
+      "tags": [
+        "Romance",
+        "Drama"
+      ],
+      "coverUrl": "/images/I Do Not Sleepx.webp",
+      "description": "An epistolary novel exploring love, independence, and women's struggles in Egyptian society.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "39",
+      "title": "I Am Free",
+      "authorId": 10,
+      "year": 1952,
+      "tags": [
+        "Romance",
+        "Social"
+      ],
+      "coverUrl": "/images/I am free).jpg",
+      "description": "A groundbreaking novel about a young woman's journey to defy patriarchal authority.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "40",
+      "title": "A Nose and Three Eyes",
+      "authorId": 10,
+      "year": 1963,
+      "tags": [
+        "Romance",
+        "Psychological"
+      ],
+      "coverUrl": "/images/A Nose and Three EyesJ.jpeg",
+      "description": "A psychological exploration of relationships between men and women in conservative Egyptian society.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "41",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "authorId": 11,
+      "year": 1997,
+      "tags": [
+        "Fantasy",
+        "Adventure"
+      ],
+      "coverUrl": "/images/Harry Potter and the Philosopher's Stone.webp",
+      "description": "A young wizard discovers his magical heritage and begins his education at Hogwarts School of Witchcraft and Wizardry.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "42",
+      "title": "Harry Potter and the Chamber of Secrets",
+      "authorId": 11,
+      "year": 1998,
+      "tags": [
+        "Fantasy",
+        "Adventure"
+      ],
+      "coverUrl": "/images/Harry Potter and the Chamber of SecretsQL80_.jpg",
+      "description": "Harry's second year at Hogwarts is marked by mysterious attacks and the legend of the Chamber of Secrets.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "43",
+      "title": "Harry Potter and the Prisoner of Azkaban",
+      "authorId": 11,
+      "year": 1999,
+      "tags": [
+        "Fantasy",
+        "Adventure"
+      ],
+      "coverUrl": "/images/Harry Potter and the Prisoner of Azkaban_.jpg",
+      "description": "Harry learns more about his past as an escaped prisoner threatens Hogwarts.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "44",
+      "title": "The Da Vinci Code",
+      "authorId": 12,
+      "year": 2003,
+      "tags": [
+        "Thriller",
+        "Mystery"
+      ],
+      "coverUrl": "/images/The Da Vinci Code5.jpg",
+      "description": "A symbologist uncovers a conspiracy involving the Catholic Church and the Holy Grail.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "45",
+      "title": "Angels and Demons",
+      "authorId": 12,
+      "year": 2000,
+      "tags": [
+        "Thriller",
+        "Mystery"
+      ],
+      "coverUrl": "/images/Angels and Demons0.jpg",
+      "description": "Robert Langdon races to prevent the destruction of Vatican City by an ancient secret society.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "46",
+      "title": "Inferno",
+      "authorId": 12,
+      "year": 2013,
+      "tags": [
+        "Thriller",
+        "Mystery"
+      ],
+      "coverUrl": "/images/Inferno_.jpg",
+      "description": "Robert Langdon awakens in Italy with amnesia and must stop a deadly global plague.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "47",
+      "title": "A Game of Thrones",
+      "authorId": 13,
+      "year": 1996,
+      "tags": [
+        "Fantasy",
+        "Epic"
+      ],
+      "coverUrl": "/images/A Game of Thrones_.jpg",
+      "description": "Noble families compete for control of the Iron Throne in the Seven Kingdoms of Westeros.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "48",
+      "title": "A Clash of Kings",
+      "authorId": 13,
+      "year": 1998,
+      "tags": [
+        "Fantasy",
+        "Epic"
+      ],
+      "coverUrl": "/images/A Clash of Kings2.jpg",
+      "description": "The War of the Five Kings rages as multiple claimants battle for the Iron Throne.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "49",
+      "title": "A Storm of Swords",
+      "authorId": 13,
+      "year": 2000,
+      "tags": [
+        "Fantasy",
+        "Epic"
+      ],
+      "coverUrl": "/images/A Storm of Swords0_.jpg",
+      "description": "The third book in A Song of Ice and Fire series, featuring the Red Wedding and other shocking events.",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    }
+  ]
 }
