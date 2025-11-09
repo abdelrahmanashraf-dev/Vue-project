@@ -8,27 +8,10 @@ const router = useRouter()
 
 const author = ref({})
 const relatedAuthors = ref([])
+const authorBooks = ref([]) 
+
 const isDark = ref(true)
 const loading = ref(true)
-
-// Fetch data for current author
-const fetchData = async (authorId) => {
-  loading.value = true
-  author.value = {}
-  relatedAuthors.value = []
-
-  try {
-    const resAuthor = await axios.get(`http://localhost:3000/authors/${authorId}`)
-    author.value = resAuthor.data
-
-    const resOtherAuthors = await axios.get(`http://localhost:3000/authors?_limit=6`)
-    relatedAuthors.value = resOtherAuthors.data.filter(a => a.id != authorId)
-  } catch (error) {
-    console.error('Error fetching data:', error)
-  } finally {
-    loading.value = false
-  }
-}
 
 // Theme
 const updateTheme = () => {
@@ -36,55 +19,83 @@ const updateTheme = () => {
   isDark.value = saved === 'dark'
 }
 
-// Navigate to another author
+// Navigate
 const goToAuthor = (id) => {
   if (route.params.id != id) {
     router.replace({ name: 'author-details', params: { id } })
   }
 }
 
-// Mounted
-onMounted(() => {
-  if (!document.documentElement.getAttribute('data-theme')) {
-    document.documentElement.setAttribute('data-theme', 'dark')
+const goToBook = (id) => {
+  router.push({ name: 'book-details', params: { id } })
+}
+
+// Shuffle helper
+const shuffleArray = (array) => array.sort(() => 0.5 - Math.random())
+
+// Fetch author + related + top 2 books
+const fetchData = async (authorId) => {
+  loading.value = true
+  author.value = {}
+  relatedAuthors.value = []
+  authorBooks.value = []
+
+  try {
+    // Author
+    const resAuthor = await axios.get(`http://localhost:3000/authors/${authorId}`)
+    author.value = resAuthor.data
+
+    // Author books
+    const resBooks = await axios.get(`http://localhost:3000/books?authorId=${authorId}`)
+    authorBooks.value = resBooks.data.slice(0, 2) 
+
+    // Related authors
+    const resOtherAuthors = await axios.get(`http://localhost:3000/authors`)
+    let otherAuthors = resOtherAuthors.data
+      .filter(a => a.id != authorId)
+      .map(a => ({ ...a }))
+
+    // Shuffle and pick first 6
+    relatedAuthors.value = shuffleArray(otherAuthors).slice(0, 6)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
   }
-  updateTheme()
-  fetchData(route.params.id)
-})
+}
 
-// Watch route param to fetch new data when ID changes
-watch(() => route.params.id, (newId) => {
-  fetchData(newId)
-})
-
-// Theme observer for dynamic changes
+// Theme observer
 const themeObserver = () => {
-  const observer = new MutationObserver(() => updateTheme())
+  const observer = new MutationObserver(updateTheme)
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 }
 
 onMounted(() => {
+  if (!document.documentElement.getAttribute('data-theme'))
+    document.documentElement.setAttribute('data-theme', 'dark')
+
+  updateTheme()
+  fetchData(route.params.id)
   themeObserver()
 })
+
+watch(() => route.params.id, (newId) => fetchData(newId))
 </script>
 
 <template>
-<div :key="route.fullPath" 
-     :class="isDark ? 'bg-base-100 text-base-content' : 'bg-base-100 text-base-content'"
-     class="min-h-screen font-sans">
+<div :key="route.fullPath" class="min-h-screen font-sans" :class="isDark ? 'bg-base-100 text-base-content' : 'bg-base-100 text-base-content'">
 
-  <!-- Loading Spinner -->
+  <!-- Loading -->
   <div v-if="loading" class="flex justify-center items-center h-96">
     <span :class="isDark ? 'text-white' : 'text-gray-900'">Loading...</span>
   </div>
 
   <!-- Author Details -->
   <section v-else class="container mx-auto px-6 py-12">
-    <div :class="isDark
-          ? 'bg-base-100 text-base-content border-gray-700'
-          : 'bg-base-100 text-base-content border-gray-200'"
-         class="lg:flex shadow-xl rounded-2xl overflow-hidden border">
-      
+    <div :class="isDark ? 'bg-base-100 text-base-content border-gray-700' : 'bg-base-100 text-base-content border-gray-200'" 
+         class="lg:flex shadow-xl rounded-2xl overflow-hidden border"
+         style="min-height: 400px; max-height: 480px;"> 
+
       <!-- Author Avatar -->
       <figure class="w-full lg:w-1/3 bg-base-200">
         <img :src="author.avatarUrl" alt="Author photo"
@@ -96,6 +107,13 @@ onMounted(() => {
         <div>
           <h2 class="text-3xl font-bold mb-2 text-primary">{{ author.name }}</h2>
           <p class="leading-relaxed mb-6">{{ author.bio }}</p>
+
+          <h3 class="font-semibold mb-2 text-secondary">📚 Top Works:</h3>
+          <ul class="list-disc pl-5 space-y-1 text-sm">
+            <li v-for="book in authorBooks" :key="book.id" class="cursor-pointer hover:text-primary" @click="goToBook(book.id)">
+              {{ book.title }} ({{ book.year }})
+            </li>
+          </ul>
         </div>
 
         <div class="flex gap-3 flex-wrap mt-4">
@@ -108,18 +126,26 @@ onMounted(() => {
     </div>
   </section>
 
-  <!-- Related Authors Section -->
+  <!-- Related Authors -->
   <section v-if="!loading && relatedAuthors.length" class="container mx-auto px-6 py-12">
     <h2 class="text-2xl font-bold mb-6 text-primary">Other Authors</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
       <div v-for="other in relatedAuthors" :key="other.id"
-           @click="goToAuthor(other.id)"
-           class="cursor-pointer card card-compact shadow-lg rounded-xl hover:scale-105 transition-transform bg-base-100">
-        <figure class="h-40 overflow-hidden">
+           class="cursor-pointer card shadow-lg rounded-xl hover:scale-105 transition-transform bg-base-100 flex flex-col overflow-hidden"
+           style="height: 220px;"
+           @click="goToAuthor(other.id)">
+
+        <figure class="h-[55%] w-full overflow-hidden flex-shrink-0">
           <img :src="other.avatarUrl" alt="Author" class="object-cover w-full h-full"/>
         </figure>
-        <div class="card-body p-3 text-center">
-          <h3 class="font-semibold text-sm truncate">{{ other.name }}</h3>
+
+        <div class="p-1 h-[45%] flex flex-col justify-center text-center overflow-hidden">
+          <h3 class="font-semibold text-sm truncate mb-1">{{ other.name }}</h3>
+          <ul v-if="other.topBooks" class="text-xs text-secondary space-y-1 mt-1">
+            <li v-for="book in other.topBooks" :key="book.id" class="truncate cursor-pointer hover:text-primary" @click.stop="goToBook(book.id)">
+              {{ book.title }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
