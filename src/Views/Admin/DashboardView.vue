@@ -1,18 +1,113 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const books = ref([])
+const authors = ref([])
+const booksCount = ref(0)
+const authorsCount = ref(0)
+const topAuthor = ref(null)
+const topTag = ref('')
+const latestBooks = ref([])
+const isSidebarOpen = ref(false)
+
+const getAuthorName = (id) => authors.value.find(a => a.id === id)?.name || '-'
+
+const fetchDashboardData = async () => {
+  const [booksRes, authorsRes] = await Promise.all([
+    axios.get('http://localhost:3000/books'),
+    axios.get('http://localhost:3000/authors')
+  ])
+
+  books.value = booksRes.data
+  authors.value = authorsRes.data
+
+  booksCount.value = books.value.length
+  authorsCount.value = authors.value.length
+
+  // Top author
+  const authorCount = {}
+  books.value.forEach(b => {
+    authorCount[b.authorId] = (authorCount[b.authorId] || 0) + 1
+  })
+  const topId = Object.entries(authorCount).sort((a, b) => b[1] - a[1])[0]?.[0]
+  topAuthor.value = authors.value.find(a => a.id == topId)
+
+  // Top tag
+  const tagCount = {}
+  books.value.forEach(b => b.tags.forEach(tag => tagCount[tag] = (tagCount[tag] || 0) + 1))
+  topTag.value = Object.entries(tagCount).sort((a, b) => b[1] - a[1])[0]?.[0] || '-'
+
+  // Latest 5 books
+  latestBooks.value = books.value.slice(-5).reverse()
+}
+
+onMounted(fetchDashboardData)
+</script>
+
 <template>
   <div class="flex min-h-screen bg-base-200">
     <!-- Sidebar -->
-    <aside class="w-64 bg-base-100 border-r border-gray-200 p-4 hidden md:block">
-      <h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
+    <aside
+      class="fixed md:static z-40 bg-base-100 border-r border-gray-200 p-4 w-64 min-h-screen transform transition-transform duration-300"
+      :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+    >
+      <!-- Close button for mobile -->
+      <button
+        @click="isSidebarOpen = false"
+        class="md:hidden absolute top-4 right-4 btn btn-sm btn-circle btn-ghost"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
       <ul class="menu">
-        <li><router-link to="/admin" class="hover:bg-primary/10">Dashboard</router-link></li>
-        <li><router-link to="/admin/books" class="hover:bg-primary/10">Books</router-link></li>
-        <li><router-link to="/admin/authors" class="hover:bg-primary/10">Authors</router-link></li>
+        <li>
+          <router-link 
+            to="/admin" 
+            class="hover:bg-primary/10"
+            :class="{ 'bg-primary text-white': $route.path === '/admin' }"
+          >
+            Dashboard Overview
+          </router-link>
+        </li>
+        <li>
+          <router-link 
+            to="/admin/books" 
+            class="hover:bg-primary/10"
+            :class="{ 'bg-primary text-white': $route.path === '/admin/books' }"
+          >
+            Books
+          </router-link>
+        </li>
+        <li>
+          <router-link 
+            to="/admin/authors" 
+            class="hover:bg-primary/10"
+            :class="{ 'bg-primary text-white': $route.path === '/admin/authors' }"
+          >
+            Authors
+          </router-link>
+        </li>
       </ul>
     </aside>
 
     <!-- Main content -->
     <main class="flex-1 p-6">
-
+      <!-- Menu toggle button (for mobile) -->
+      <button
+        @click="isSidebarOpen = !isSidebarOpen"
+        class="btn btn-ghost md:hidden mb-4"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
 
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -72,48 +167,4 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
 
-const books = ref([])
-const authors = ref([])
-const booksCount = ref(0)
-const authorsCount = ref(0)
-const topAuthor = ref(null)
-const topTag = ref('')
-const latestBooks = ref([])
-
-const getAuthorName = (id) => authors.value.find(a => a.id === id)?.name || '-'
-
-const fetchDashboardData = async () => {
-  const [booksRes, authorsRes] = await Promise.all([
-    axios.get('http://localhost:3000/books'),
-    axios.get('http://localhost:3000/authors')
-  ])
-
-  books.value = booksRes.data
-  authors.value = authorsRes.data
-
-  booksCount.value = books.value.length
-  authorsCount.value = authors.value.length
-
-  // Top author
-  const authorCount = {}
-  books.value.forEach(b => {
-    authorCount[b.authorId] = (authorCount[b.authorId] || 0) + 1
-  })
-  const topId = Object.entries(authorCount).sort((a,b)=>b[1]-a[1])[0]?.[0]
-  topAuthor.value = authors.value.find(a => a.id == topId)
-
-  // Top tag
-  const tagCount = {}
-  books.value.forEach(b => b.tags.forEach(tag => tagCount[tag]=(tagCount[tag]||0)+1))
-  topTag.value = Object.entries(tagCount).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-'
-
-  // Latest 5 books
-  latestBooks.value = books.value.slice(-5).reverse()
-}
-
-onMounted(fetchDashboardData)
-</script>
