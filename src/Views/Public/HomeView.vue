@@ -82,10 +82,10 @@ export default {
       this.error = null;
       
       try {
-        const response = await fetch('http://localhost:3001/books');
+        const response = await fetch('http://localhost:3000/books');
         
         if (!response.ok) {
-          throw new Error('Failed to fetch books. Make sure json-server is running on port 3001.');
+          throw new Error('Failed to fetch books. Make sure json-server is running on port 3000.');
         }
         
         this.books = await response.json();

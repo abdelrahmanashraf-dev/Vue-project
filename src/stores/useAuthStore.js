@@ -1,11 +1,29 @@
-// stores/useAuthStore.js
+
 import { defineStore } from 'pinia'
 
-const STATIC_CREDENTIALS = {
-  email: 'abdelrahman@gmail.com',
-  password: 'Abdelrahman@123',
-  name: 'Abdelrahman Ashraf'
-}
+
+const USERS = [
+  {
+    email: 'abdelrahman@gmail.com',
+    password: 'Abdelrahman@123',
+    name: 'Abdelrahman Ashraf'
+  },
+  {
+   email: 'es.mostafa180@gmail.com',
+    password: 'es123456',
+    name: 'Esraa Mostafa'
+  },
+    {
+    email: '...@gmail.com',
+    password: '....',
+    name: 'Jehan Usama'
+  },
+    {
+    email: '....@gmail.com',
+    password: '....',
+    name: 'Hassan Ahmed'
+  }
+]
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -24,23 +42,26 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
       this.error = null
 
+
       try {
-        // Simulate API delay
+
         await new Promise(resolve => setTimeout(resolve, 800))
 
-        // Check credentials
-        if (email === STATIC_CREDENTIALS.email && password === STATIC_CREDENTIALS.password) {
+        const user = USERS.find(
+          u => u.email === email && u.password === password
+        )
+
+        if (user) {
           const userData = {
-            email: STATIC_CREDENTIALS.email,
-            name: STATIC_CREDENTIALS.name,
-            avatar: 'https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff&size=128'
+            email: user.email,
+            name: user.name,
+            avatar: `https://ui-avatars.com/api/?name=${user.name}&background=6366f1&color=fff&size=128`
           }
           
           this.user = userData
-          
-          // Save to localStorage for persistence
+  
           localStorage.setItem('auth_user', JSON.stringify(userData))
-          
+
           return { success: true }
         } else {
           throw new Error('Invalid email or password')
@@ -58,8 +79,9 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('auth_user')
     },
 
+  
     checkAuth() {
-      // Check if user is logged in from localStorage
+  
       const savedUser = localStorage.getItem('auth_user')
       if (savedUser) {
         try {
