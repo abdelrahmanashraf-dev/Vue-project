@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 // Layouts
 import PublicLayout from '@/Layouts/PublicLayout.vue'
@@ -11,6 +12,8 @@ import BooksListView from '../Views/Public/BooksListView.vue'
 import BooksDetailsView from '../Views/Public/BooksDetailsView.vue'
 import AuthorsListView from '../Views/Public/AuthorsListView.vue'
 import AuthorDetailsView from '../Views/Public/AuthorDetailsView.vue'
+import LoginView from '../Views/Public/LoginView.vue'
+
 
 // Admin Views
 import DashboardView from '@/Views/Admin/DashboardView.vue'
@@ -18,9 +21,8 @@ import BooksTableView from '@/Views/Admin/BooksTable.vue'
 import BookFormView from '@/Views/Admin/BookFormView.vue'
 import AuthorsFormView from '@/Views/Admin/AuthorsFormView.vue'
 import AuthorsTableView from '@/Views/Admin/AuthorsTableView.vue'
-
 const routes = [
-  
+  // Public Routes
   {
     path: '/',
     component: PublicLayout,
@@ -64,7 +66,15 @@ const routes = [
     ]
   },
 
-  
+  // Login Route (No Layout)
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
+    meta: { title: 'Login', requiresGuest: true }
+  },
+
+  // Admin Routes (Protected)
   {
     path: '/admin',
     component: AdminLayout,
@@ -122,6 +132,37 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
     return { top: 0, left: 0, behavior: 'smooth' }
+  }
+})
+
+// Navigation Guards
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  
+  // Check if route requires authentication
+  if (to.meta.requiresAuth) {
+    if (!authStore.isAuthenticated) {
+      // Redirect to login with return URL
+      next({
+        name: 'login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  }
+  // Check if route requires guest (already logged in)
+  else if (to.meta.requiresGuest) {
+    if (authStore.isAuthenticated) {
+      // Redirect to admin dashboard if already logged in
+      next({ name: 'admin' })
+    } else {
+      next()
+    }
+  }
+  // No auth requirements
+  else {
+    next()
   }
 })
 

@@ -1,8 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import AdminSidebar from '@/components/AdminSidebar.vue'
+import Toast from '@/components/Ui/Toast.vue'
+import { useToast } from '@/composables/useToast'
 
 const isSidebarOpen = ref(false)
+const { toastState, hideToast } = useToast()
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
@@ -46,5 +49,14 @@ const closeSidebar = () => {
         <router-view />
       </main>
     </div>
+
+    <!-- Toast Notification -->
+    <Toast
+      :show="toastState.show"
+      :message="toastState.message"
+      :type="toastState.type"
+      :duration="toastState.duration"
+      @close="hideToast"
+    />
   </div>
 </template>

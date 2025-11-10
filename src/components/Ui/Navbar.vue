@@ -30,8 +30,9 @@
           </div>
         </div>
 
-        <!-- Links + Theme + Mobile -->
+        <!-- Links + Auth + Theme + Mobile -->
         <div class="flex items-center gap-2">
+          <!-- Desktop Links -->
           <div class="hidden lg:flex items-center gap-1">
             <router-link to="/" class="btn btn-ghost btn-sm">Home</router-link>
             <router-link to="/about" class="btn btn-ghost btn-sm">About</router-link>
@@ -40,6 +41,52 @@
           </div>
 
           <div class="hidden lg:block divider divider-horizontal mx-0"></div>
+
+          <!-- Auth Section -->
+          <div v-if="authStore.isAuthenticated" class="hidden lg:block">
+            <div class="dropdown dropdown-end">
+              <label tabindex="0" class="btn btn-ghost btn-sm gap-2">
+                <div class="avatar">
+                  <div class="w-8 rounded-full">
+                    <img :src="authStore.currentUser?.avatar" :alt="authStore.currentUser?.name" />
+                  </div>
+                </div>
+                <span class="hidden xl:inline">{{ authStore.currentUser?.name }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </label>
+              <ul tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-box w-52 mt-4">
+                <li>
+                  <router-link to="/admin" class="gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Admin Dashboard
+                  </router-link>
+                </li>
+                <li class="menu-title">
+                  <span>Account</span>
+                </li>
+                <li>
+                  <button @click="handleLogout" class="text-error gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div v-else class="hidden lg:block">
+            <router-link to="/login" class="btn btn-primary btn-sm gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              Login
+            </router-link>
+          </div>
 
           <!-- Theme Toggle -->
           <button
@@ -97,6 +144,20 @@
             <li><router-link @click="closeMobile" to="/about">About</router-link></li>
             <li><router-link @click="closeMobile" to="/books">Books</router-link></li>
             <li><router-link @click="closeMobile" to="/authors">Authors</router-link></li>
+            
+            <li class="menu-title mt-2">
+              <span>Account</span>
+            </li>
+            
+            <li v-if="authStore.isAuthenticated">
+              <router-link @click="closeMobile" to="/admin">Admin Dashboard</router-link>
+            </li>
+            <li v-if="authStore.isAuthenticated">
+              <button @click="handleLogout" class="text-error">Logout</button>
+            </li>
+            <li v-else>
+              <router-link @click="closeMobile" to="/login">Login</router-link>
+            </li>
           </ul>
         </div>
       </div>
@@ -107,8 +168,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
+const authStore = useAuthStore()
+const { showToast } = useToast()
+
 const mobileOpen = ref(false)
 const query = ref('')
 const isDark = ref(false)
@@ -133,6 +199,13 @@ function toggleTheme() {
   const next = current === 'light' ? 'dark' : 'light'
   document.documentElement.setAttribute('data-theme', next)
   isDark.value = next === 'dark'
+}
+
+function handleLogout() {
+  authStore.logout()
+  showToast('Logged out successfully', 'success', 3000)
+  router.push({ name: 'home' })
+  closeMobile()
 }
 </script>
 

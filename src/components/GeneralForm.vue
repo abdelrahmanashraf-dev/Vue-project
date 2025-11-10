@@ -17,69 +17,7 @@ const props = defineProps({
   config: {
     type: Object,
     required: true
-    // Example config:
-    // {
-    //   entityName: 'Book',
-    //   entityNamePlural: 'Books',
-    //   icon: '📚',
-    //   basePath: '/admin/books',
-    //   fields: [
-    //     {
-    //       key: 'title',
-    //       label: 'Title',
-    //       type: 'text',
-    //       required: true,
-    //       minLength: 3,
-    //       maxLength: 100,
-    //       icon: '📖'
-    //     },
-    //     {
-    //       key: 'authorId',
-    //       label: 'Author',
-    //       type: 'select',
-    //       required: true,
-    //       validateExists: true, // check if ID exists via API
-    //       options: (relatedStore) => relatedStore.authors,
-    //       optionLabel: (opt) => opt.name,
-    //       icon: '✍️'
-    //     },
-    //     {
-    //       key: 'year',
-    //       label: 'Year',
-    //       type: 'number',
-    //       required: true,
-    //       min: 1800,
-    //       max: () => new Date().getFullYear(),
-    //       icon: '📅'
-    //     },
-    //     {
-    //       key: 'tags',
-    //       label: 'Tags',
-    //       type: 'tags',
-    //       maxItems: 8,
-    //       minLength: 2,
-    //       maxLength: 20,
-    //       icon: '🏷️'
-    //     },
-    //     {
-    //       key: 'description',
-    //       label: 'Description',
-    //       type: 'textarea',
-    //       maxLength: 2000,
-    //       rows: 6,
-    //       icon: '📝'
-    //     }
-    //   ],
-    //   checkDuplicate: async (form, store, itemId) => {
-    //     // Custom duplicate check logic
-    //     const dup = store.books.find(b => 
-    //       b.title.toLowerCase() === form.title.toLowerCase() &&
-    //       b.authorId === parseInt(form.authorId) &&
-    //       b.id !== parseInt(itemId)
-    //     )
-    //     return dup ? 'This author already has a book with this title' : null
-    //   }
-    // }
+    
   }
 })
 
