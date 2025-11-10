@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 
 const books = ref([])
@@ -8,10 +8,13 @@ const booksCount = ref(0)
 const authorsCount = ref(0)
 const topAuthor = ref(null)
 const topTag = ref('-')
-const latestBooks = ref([])
 const isSidebarOpen = ref(false)
 
-// تعديل الدالة عشان تتعامل مع اختلاف النوع
+// Pagination
+const currentPage = ref(1)
+const perPage = ref(5) // عدد الكتب في الصفحة
+const totalPages = ref(1)
+
 const getAuthorName = (id) => authors.value.find(a => a.id == id)?.name || '-'
 
 const fetchDashboardData = async () => {
@@ -40,10 +43,24 @@ const fetchDashboardData = async () => {
     books.value.forEach(b => b.tags.forEach(tag => tagCount[tag] = (tagCount[tag] || 0) + 1))
     topTag.value = Object.entries(tagCount).sort((a, b) => b[1] - a[1])[0]?.[0] || '-'
 
-    // Latest 5 books
-    latestBooks.value = books.value.slice(-5).reverse()
+    // Pagination total pages
+    totalPages.value = Math.ceil(books.value.length / perPage.value)
+
   } catch (error) {
     console.error('Error fetching dashboard data:', error)
+  }
+}
+
+// الكتب اللي هتظهر في الصفحة الحالية
+const paginatedBooks = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value
+  const end = start + perPage.value
+  return books.value.slice().reverse().slice(start, end)
+})
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
   }
 }
 
@@ -57,7 +74,6 @@ onMounted(fetchDashboardData)
       class="fixed md:static z-40 bg-base-100 border-r border-gray-200 p-4 w-64 min-h-screen transform transition-transform duration-300"
       :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
     >
-      <!-- Close button for mobile -->
       <button
         @click="isSidebarOpen = false"
         class="md:hidden absolute top-4 right-4 btn btn-sm btn-circle btn-ghost"
@@ -71,38 +87,19 @@ onMounted(fetchDashboardData)
 
       <ul class="menu">
         <li>
-          <router-link 
-            to="/admin" 
-            class="hover:bg-primary/10"
-            :class="{ 'bg-primary text-white': $route.path === '/admin' }"
-          >
-            Dashboard Overview
-          </router-link>
+          <router-link to="/admin" class="hover:bg-primary/10" :class="{ 'bg-primary text-white': $route.path === '/admin' }">Dashboard Overview</router-link>
         </li>
         <li>
-          <router-link 
-            to="/admin/books" 
-            class="hover:bg-primary/10"
-            :class="{ 'bg-primary text-white': $route.path === '/admin/books' }"
-          >
-            Books
-          </router-link>
+          <router-link to="/admin/books" class="hover:bg-primary/10" :class="{ 'bg-primary text-white': $route.path === '/admin/books' }">Books</router-link>
         </li>
         <li>
-          <router-link 
-            to="/admin/authors" 
-            class="hover:bg-primary/10"
-            :class="{ 'bg-primary text-white': $route.path === '/admin/authors' }"
-          >
-            Authors
-          </router-link>
+          <router-link to="/admin/authors" class="hover:bg-primary/10" :class="{ 'bg-primary text-white': $route.path === '/admin/authors' }">Authors</router-link>
         </li>
       </ul>
     </aside>
 
     <!-- Main content -->
     <main class="flex-1 p-6">
-      <!-- Menu toggle button (for mobile) -->
       <button
         @click="isSidebarOpen = !isSidebarOpen"
         class="btn btn-ghost md:hidden mb-4"
@@ -134,9 +131,9 @@ onMounted(fetchDashboardData)
         </div>
       </div>
 
-      <!-- Recent Books -->
+      <!-- Recent Books with Pagination -->
       <div class="card bg-base-100 shadow-md p-4">
-        <h2 class="text-xl font-semibold mb-4">Recently Added Books</h2>
+        <h2 class="text-xl font-semibold mb-4">Books</h2>
         <div class="overflow-x-auto">
           <table class="table w-full">
             <thead>
@@ -148,7 +145,7 @@ onMounted(fetchDashboardData)
               </tr>
             </thead>
             <tbody>
-              <tr v-for="book in latestBooks" :key="book.id">
+              <tr v-for="book in paginatedBooks" :key="book.id">
                 <td><img :src="book.coverUrl" class="w-16 h-20 object-cover rounded"></td>
                 <td>{{ book.title }}</td>
                 <td>{{ getAuthorName(book.authorId) }}</td>
@@ -156,6 +153,20 @@ onMounted(fetchDashboardData)
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="flex justify-center mt-4 gap-2">
+          <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" class="btn btn-sm">Prev</button>
+          <button 
+            v-for="page in totalPages" 
+            :key="page" 
+            @click="goToPage(page)" 
+            :class="['btn btn-sm', { 'btn-primary': currentPage === page }]"
+          >
+            {{ page }}
+          </button>
+          <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" class="btn btn-sm">Next</button>
         </div>
       </div>
     </main>
