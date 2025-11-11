@@ -1,11 +1,29 @@
 // stores/useAuthStore.js
 import { defineStore } from 'pinia'
 
-const STATIC_CREDENTIALS = {
-  email: 'abdelrahman@gmail.com',
-  password: 'Abdelrahman@123',
-  name: 'Abdelrahman Ashraf'
-}
+const USERS = [
+  {
+    email: 'abdelrahman@gmail.com',
+    password: 'Abdelrahman@123',
+    name: 'Abdelrahman Ashraf'
+  },
+  {
+    email: 'es.mostafa180@gmail.com',
+    password: 'es123456',
+    name: 'Esraa Mostafa'
+  },
+    {
+    email: 'jehan@gmail.com',
+    password: 'Jehan123&',
+    name: 'Jehan Usama'
+  },
+    {
+    email: 'Hassan@gmail.com',
+    password: 'Hassan@123',
+    name: 'Hassan Ahmed'
+  }
+]
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({

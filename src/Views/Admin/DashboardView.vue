@@ -11,7 +11,7 @@ const topTag = ref('-')
 const latestBooks = ref([])
 const loading = ref(true)
 
-// تعديل الدالة عشان تتعامل مع اختلاف النوع
+
 const getAuthorName = (id) => authors.value.find(a => a.id == id)?.name || '-'
 
 const fetchDashboardData = async () => {

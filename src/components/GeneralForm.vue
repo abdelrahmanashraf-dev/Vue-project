@@ -2,7 +2,6 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Toast from '@/components/Ui/Toast.vue'
-import AdminLayout from '../Layouts/AdminLayout.vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -292,7 +291,7 @@ const submitForm = async () => {
     const duplicateError = await props.config.checkDuplicate(
       form.value,
       props.store,
-      route.params.id
+      isEditMode.value ? route.params.id : null
     )
     if (duplicateError) {
       const firstField = props.config.fields[0].key
@@ -543,8 +542,8 @@ const closeToast = () => {
               </label>
               <input
                 v-model="form[field.key]"
-                type="url"
-                :placeholder="`https://example.com/${field.label.toLowerCase()}.jpg`"
+                type="text"
+                :placeholder="`https://example.com/image.jpg or /images/cover.jpg`"
                 class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100"
                 :class="errors[field.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"
                 @blur="validateField(field)"

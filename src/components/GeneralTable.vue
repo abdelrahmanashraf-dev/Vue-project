@@ -19,23 +19,7 @@ const props = defineProps({
   config: {
     type: Object,
     required: true,
-    // Example: {
-    //   entityName: 'Book', // singular
-    //   entityNamePlural: 'Books', // plural
-    //   icon: '📚',
-    //   basePath: '/admin/books',
-    //   searchField: 'title', // field to search in
-    //   filterField: 'authorId', // field to filter by (optional)
-    //   filterLabel: 'Author', // label for filter
-    //   getFilterOptions: (relatedStore) => relatedStore.authors, // function to get filter options
-    //   getFilterOptionLabel: (option) => option.name,
-    //   columns: [
-    //     { key: 'title', label: 'Title', type: 'text' },
-    //     { key: 'authorId', label: 'Author', type: 'relation', getLabel: (id, relatedStore) => ... },
-    //     { key: 'year', label: 'Year', type: 'number' },
-    //     { key: 'tags', label: 'Tags', type: 'tags' }
-    //   ]
-    // }
+    
   }
 })
 

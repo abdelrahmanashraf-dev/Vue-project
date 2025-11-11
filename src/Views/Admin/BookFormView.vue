@@ -65,11 +65,16 @@ const bookFormConfig = {
     }
   ],
   checkDuplicate: async (form, store, itemId) => {
+    const currentItemId = itemId ? parseInt(itemId) : null
+
     const duplicate = store.books.find(
-      book =>
-        book.title.toLowerCase() === form.title.toLowerCase() &&
-        book.authorId === parseInt(form.authorId) &&
-        book.id !== parseInt(itemId)
+      book => {
+        const sameTitle = book.title.toLowerCase() === form.title.toLowerCase()
+        const sameAuthor = book.authorId === parseInt(form.authorId)
+        const differentBook = parseInt(book.id) !== currentItemId
+
+        return sameTitle && sameAuthor && differentBook
+      }
     )
     return duplicate ? 'This author already has a book with this title' : null
   }
