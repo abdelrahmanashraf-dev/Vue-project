@@ -1,9 +1,6 @@
 
 import { defineStore } from 'pinia'
 
-
-
-
 const USERS = [
   {
     email: 'abdelrahman@gmail.com',
@@ -15,8 +12,7 @@ const USERS = [
     password: 'es123456',
     name: 'Esraa Mostafa'
   },
-    {
-
+  {
     email: 'jehan@gmail.com',
     password: 'Jehan123&',
     name: 'Jehan Usama'

@@ -42,10 +42,25 @@ export const useAuthorsStore = defineStore('authors', {
       this.loading = true
       this.error = null
       try {
-        const res = await axios.post(BASE_URL, newAuthor)
+        // 🎯 احسب أكبر ID (convert to number)
+        const maxId = this.authors.length > 0 
+          ? Math.max(...this.authors.map(a => parseInt(a.id))) 
+          : 0
+        
+        // ✅ أزل أي id موجود وحط الـ id الجديد كـ string
+        const { id, ...authorData } = newAuthor
+        const authorWithId = {
+          ...authorData,
+          id: String(maxId + 1)  // 👈 Convert to string
+        }
+        
+        const res = await axios.post(BASE_URL, authorWithId)
         this.authors.push(res.data)
+        
+        console.log('✅ New author ID:', res.data.id)
       } catch (err) {
         this.error = err.message
+        throw err
       } finally {
         this.loading = false
       }
@@ -56,7 +71,7 @@ export const useAuthorsStore = defineStore('authors', {
       this.error = null
       try {
         const res = await axios.put(`${BASE_URL}/${id}`, updatedData)
-        const index = this.authors.findIndex(a => a.id === id)
+        const index = this.authors.findIndex(a => a.id == id) // 👈 استخدم == بدل ===
         if (index !== -1) this.authors[index] = res.data
       } catch (err) {
         this.error = err.message
@@ -70,7 +85,7 @@ export const useAuthorsStore = defineStore('authors', {
       this.error = null
       try {
         await axios.delete(`${BASE_URL}/${id}`)
-        this.authors = this.authors.filter(a => a.id !== id)
+        this.authors = this.authors.filter(a => a.id != id) // 👈 استخدم != بدل !==
       } catch (err) {
         this.error = err.message
       } finally {
