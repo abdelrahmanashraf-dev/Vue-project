@@ -33,7 +33,7 @@
                   <td>
                     <div class="avatar">
                       <div class="mask mask-squircle w-12 h-12">
-                        <img :src="book.imageUrl" :alt="book.title + ' cover'" />
+                        <img :src="book.coverUrl" :alt="book.title + ' cover'" />
                       </div>
                     </div>
                   </td>

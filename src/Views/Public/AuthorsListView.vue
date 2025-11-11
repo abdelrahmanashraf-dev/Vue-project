@@ -34,7 +34,7 @@
                   <td>
                     <div class="avatar">
                       <div class="mask mask-squircle w-12 h-12">
-                        <img :src="author.imageUrl" :alt="author.name + ' photo'" />
+                        <img :src="author.avatarUrl" :alt="author.name + ' photo'" />
                       </div>
                     </div>
                   </td>
