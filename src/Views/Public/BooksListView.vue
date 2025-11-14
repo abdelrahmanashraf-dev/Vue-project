@@ -1,16 +1,14 @@
 <template>
-  <div class="p-6 md:p-8 bg-base-200 min-h-screen" dir="ltr">
+  <div class="p-6 md:p-8 bg-base-200 min-h-screen" dir="ltr" data-theme="papyrus">
+    
     <div class="max-w-6xl mx-auto card bg-base-100 shadow-xl">
       <div class="card-body">
         
         <h2 class="card-title text-3xl">Book Management</h2>
         <div class="divider"></div>
 
-        <!-- Search and Filter Section -->
         <div class="flex flex-col md:flex-row gap-4 mb-6">
-          <!-- Search by Title -->
           <div class="form-control flex-1">
-            
             <input 
               v-model="searchQuery" 
               type="text" 
@@ -19,9 +17,7 @@
             />
           </div>
 
-          <!-- Filter by Author -->
           <div class="form-control flex-1">
-            
             <select v-model="selectedAuthorId" class="select select-bordered w-full">
               <option value="">All Authors</option>
               <option v-for="author in authors" :key="author.id" :value="author.id">
@@ -30,26 +26,18 @@
             </select>
           </div>
 
-          <!-- Clear Filters Button -->
           <div class="form-control">
-            <label class="label">
-              <span class="label-text">&nbsp;</span>
-            </label>
-            <button @click="clearFilters" class="btn btn-outline">
+            <button @click="clearFilters" class="btn btn-outline mt-auto">
               Clear Filters
             </button>
           </div>
         </div>
 
-        
-
-        <!-- Loading State -->
         <div v-if="loading" class="text-center py-10">
           <span class="loading loading-lg loading-spinner text-primary"></span>
           <p class="mt-2">Loading books...</p>
         </div>
 
-        <!-- Error State -->
         <div v-else-if="error" class="alert alert-error shadow-lg" role="alert">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -59,7 +47,6 @@
           </div>
         </div>
 
-        <!-- Books Table -->
         <div v-else-if="filteredBooks.length">
           <div class="overflow-x-auto">
             <table class="table w-full table-zebra">
@@ -101,7 +88,7 @@
                   <td>
                     <button 
                       @click="goToBookDetails(book.id)" 
-                      class="btn btn-sm btn-primary px-4 "
+                      class="btn btn-sm btn-primary px-4"
                     >
                       View Details
                     </button>
@@ -111,7 +98,6 @@
             </table>
           </div>
           
-          <!-- Pagination -->
           <div v-if="totalPages > 1" class="flex justify-center pt-6 gap-2">
             <button @click="prevPage" :disabled="currentPage === 1" class="btn">«</button>
             
@@ -129,7 +115,6 @@
           </div>
         </div>
         
-        <!-- Empty State -->
         <div v-else class="alert alert-info shadow-lg">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
@@ -146,11 +131,12 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router'; // 👈 أضف useRoute
 import { useToast } from '@/composables/useToast';
 import axios from 'axios';
 
 const router = useRouter();
+const route = useRoute(); // 👈 استخدم route عشان تقرا الـ query
 const { showToast } = useToast();
 
 // State variables
@@ -166,6 +152,11 @@ const selectedAuthorId = ref('');
 // Pagination state
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
+
+// Create a Map for faster author lookup
+const authorMap = computed(() => {
+  return new Map(authors.value.map(author => [Number(author.id), author.name]));
+});
 
 // Fetch authors for the filter dropdown
 async function fetchAuthors() {
@@ -184,7 +175,6 @@ async function fetchBooks() {
     const response = await axios.get('http://localhost:3000/books');
     books.value = response.data;
     
-    // Show success toast only on first load
     if (books.value.length > 0) {
       showToast(`Loaded ${books.value.length} books successfully`, 'success');
     }
@@ -197,11 +187,9 @@ async function fetchBooks() {
   }
 }
 
-// Get author name by ID
+// Get author name by ID (optimized with Map)
 function getAuthorName(authorId) {
-  // Convert both to numbers for proper comparison
-  const author = authors.value.find(a => Number(a.id) === Number(authorId));
-  return author ? author.name : 'Unknown Author';
+  return authorMap.value.get(Number(authorId)) || 'Unknown Author';
 }
 
 // Filtered books based on search and author filter
@@ -219,7 +207,7 @@ const filteredBooks = computed(() => {
   // Filter by author
   if (selectedAuthorId.value) {
     result = result.filter(book => 
-      book.authorId === parseInt(selectedAuthorId.value)
+      Number(book.authorId) === Number(selectedAuthorId.value)
     );
   }
 
@@ -297,6 +285,10 @@ function clearFilters() {
   searchQuery.value = '';
   selectedAuthorId.value = '';
   currentPage.value = 1;
+  
+  // 👈 امسح الـ query parameter من الـ URL
+  router.replace({ query: {} });
+  
   showToast('Filters cleared', 'info');
 }
 
@@ -312,6 +304,14 @@ watch(filteredBooks, (newVal) => {
   }
 });
 
+// 🎯 اقرا الـ query parameter من الـ URL لما الصفحة تفتح
+watch(() => route.query.q, (newQuery) => {
+  if (newQuery) {
+    searchQuery.value = newQuery;
+    showToast(`Searching for: ${newQuery}`, 'info');
+  }
+}, { immediate: true }); // 👈 immediate: true عشان يشتغل أول ما الصفحة تحمل
+
 onMounted(async () => {
   await fetchAuthors();
   await fetchBooks();
@@ -319,5 +319,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-
+/* No styles needed - DaisyUI theme handles everything */
 </style>

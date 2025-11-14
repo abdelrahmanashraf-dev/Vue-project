@@ -2,24 +2,19 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Toast from '@/components/Ui/Toast.vue'
-import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
-  // Store instance (useBooksStore or useAuthorsStore)
   store: {
     type: Object,
     required: true
   },
-  // Related store for filtering (e.g., authorsStore for books)
   relatedStore: {
     type: Object,
     default: null
   },
-  // Entity config
   config: {
     type: Object,
-    required: true,
-    
+    required: true
   }
 })
 
@@ -136,53 +131,51 @@ const getItemDisplayName = (item) => {
 </script>
 
 <template>
-  <div class="min-h-screen transition-colors duration-200">
+  <div data-theme="papyrus" class="min-h-screen transition-colors duration-200">
     <div class="container mx-auto px-4 py-8">
       <!-- Header -->
       <div class="mb-8">
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-8 shadow-xl">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent p-8 shadow-xl">
           <div class="relative z-10">
-            <h1 class="text-4xl font-bold text-white mb-2 drop-shadow-lg">
+            <h1 class="text-4xl font-bold text-primary-content mb-2 drop-shadow-lg">
               {{ config.icon }} Manage {{ config.entityNamePlural }}
             </h1>
-            <p class="text-indigo-100 text-lg">
+            <p class="text-primary-content/90 text-lg">
               Create, edit, and organize your {{ config.entityNamePlural.toLowerCase() }}
             </p>
           </div>
-          <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-          <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+          <div class="absolute top-0 right-0 w-64 h-64 bg-base-100 opacity-10 rounded-full -mr-32 -mt-32"></div>
+          <div class="absolute bottom-0 left-0 w-48 h-48 bg-base-100 opacity-10 rounded-full -ml-24 -mb-24"></div>
         </div>
       </div>
 
       <!-- Filters & Actions -->
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+      <div class="bg-base-100 rounded-2xl shadow-lg p-6 mb-6 border border-base-300 transition-colors duration-200">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <!-- Search -->
           <div :class="config.filterField ? 'lg:col-span-2' : 'lg:col-span-3'">
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              🔍 Search by {{ config.searchField }}
+            <label class="block text-sm font-semibold text-base-content mb-2">
+               Search by {{ config.searchField }}
             </label>
             <div class="relative">
               <input
                 v-model="searchQuery"
                 type="text"
                 :placeholder="`Search ${config.entityNamePlural.toLowerCase()}...`"
-                class="w-full px-4 py-3 pl-11 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                class="input input-bordered w-full"
               />
-              <svg class="w-5 h-5 absolute left-3 top-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              
             </div>
           </div>
 
           <!-- Filter (if configured) -->
           <div v-if="config.filterField && filterOptions.length > 0">
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              ✍️ Filter by {{ config.filterLabel }}
+            <label class="block text-sm font-semibold text-base-content mb-2">
+               Filter by {{ config.filterLabel }}
             </label>
             <select
               v-model="selectedFilter"
-              class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100"
+              class="select select-bordered w-full"
             >
               <option value="">All {{ config.filterLabel }}s</option>
               <option
@@ -199,7 +192,7 @@ const getItemDisplayName = (item) => {
           <div class="flex items-end">
             <button
               @click="goToCreate"
-              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              class="btn btn-primary w-full gap-2"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -210,16 +203,11 @@ const getItemDisplayName = (item) => {
         </div>
 
         <!-- View Toggle -->
-        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end">
-          <div class="flex gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+        <div class="mt-4 pt-4 border-t border-base-300 flex items-center justify-end">
+          <div class="btn-group">
             <button
               @click="viewMode = 'grid'"
-              :class="[
-                'px-4 py-2 rounded-md text-sm font-medium transition-all',
-                viewMode === 'grid' 
-                  ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-              ]"
+              :class="['btn btn-sm', viewMode === 'grid' ? 'btn-active' : '']"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -227,12 +215,7 @@ const getItemDisplayName = (item) => {
             </button>
             <button
               @click="viewMode = 'list'"
-              :class="[
-                'px-4 py-2 rounded-md text-sm font-medium transition-all',
-                viewMode === 'list' 
-                  ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-              ]"
+              :class="['btn btn-sm', viewMode === 'list' ? 'btn-active' : '']"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -244,24 +227,21 @@ const getItemDisplayName = (item) => {
 
       <!-- Loading State -->
       <div v-if="store.loading" class="flex justify-center items-center py-20">
-        <div class="relative">
-          <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 dark:border-gray-700"></div>
-          <div class="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent absolute top-0 left-0"></div>
-        </div>
+        <span class="loading loading-spinner loading-lg text-primary"></span>
       </div>
 
       <!-- Empty State -->
       <div
         v-else-if="filteredItems.length === 0"
-        class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-12 text-center border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+        class="card bg-base-100 shadow-lg p-12 text-center border border-base-300"
       >
-        <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center">
+        <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full flex items-center justify-center">
           <span class="text-6xl">{{ config.icon }}</span>
         </div>
-        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+        <h3 class="text-2xl font-bold text-base-content mb-3">
           No {{ config.entityNamePlural.toLowerCase() }} found
         </h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+        <p class="text-base-content/60 mb-8 max-w-md mx-auto">
           {{ searchQuery || selectedFilter 
             ? 'Try adjusting your filters to find what you\'re looking for' 
             : `Start by adding your first ${config.entityName.toLowerCase()}` 
@@ -270,7 +250,7 @@ const getItemDisplayName = (item) => {
         <button
           v-if="!searchQuery && !selectedFilter"
           @click="goToCreate"
-          class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          class="btn btn-primary"
         >
           Add Your First {{ config.entityName }}
         </button>
@@ -281,22 +261,20 @@ const getItemDisplayName = (item) => {
         <div
           v-for="item in filteredItems"
           :key="item.id"
-          class="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 transform hover:-translate-y-1"
+          class="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 transform hover:-translate-y-1"
         >
-          <!-- Card Content (use slot for custom rendering) -->
           <slot name="grid-card" :item="item" :goToEdit="goToEdit" :confirmDelete="confirmDelete">
-            <!-- Default card with image support -->
             <!-- Image/Cover Section -->
-            <div v-if="item.coverUrl || item.avatarUrl" class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+            <div v-if="item.coverUrl || item.avatarUrl" class="relative h-48 overflow-hidden bg-gradient-to-br from-base-200 to-base-300">
               <img
                 :src="item.coverUrl || item.avatarUrl"
                 :alt="getItemDisplayName(item)"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
               />
               <div class="absolute top-3 right-3 flex gap-2">
                 <button
                   @click="goToEdit(item.id)"
-                  class="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-indigo-600 dark:text-indigo-400 rounded-full hover:bg-white dark:hover:bg-gray-700 transition-all shadow-lg hover:scale-110"
+                  class="btn btn-circle btn-sm btn-primary"
                   title="Edit"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,7 +283,7 @@ const getItemDisplayName = (item) => {
                 </button>
                 <button
                   @click="confirmDelete(item)"
-                  class="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-red-600 dark:text-red-400 rounded-full hover:bg-white dark:hover:bg-gray-700 transition-all shadow-lg hover:scale-110"
+                  class="btn btn-circle btn-sm btn-error"
                   title="Delete"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -316,28 +294,28 @@ const getItemDisplayName = (item) => {
             </div>
 
             <!-- Content Section -->
-            <div class="p-5">
-              <h3 class="font-bold text-lg text-gray-900 dark:text-gray-100 mb-3">
+            <div class="card-body">
+              <h3 class="card-title text-base-content">
                 {{ getItemDisplayName(item) }}
               </h3>
 
               <!-- Render columns -->
               <div class="space-y-2">
                 <div v-for="column in config.columns.slice(1)" :key="column.key" class="text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">{{ column.label }}:</span>
-                  <span class="ml-2 font-medium text-gray-700 dark:text-gray-300">
+                  <span class="text-base-content/60">{{ column.label }}:</span>
+                  <span class="ml-2 font-medium text-base-content">
                     <template v-if="column.type === 'tags'">
                       <div class="flex flex-wrap gap-1 mt-1">
                         <span
                           v-for="(tag, idx) in getColumnValue(item, column).slice(0, 3)"
                           :key="idx"
-                          class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs rounded-full"
+                          class="badge badge-primary badge-sm"
                         >
                           {{ tag }}
                         </span>
                         <span
                           v-if="getColumnValue(item, column).length > 3"
-                          class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full"
+                          class="badge badge-ghost badge-sm"
                         >
                           +{{ getColumnValue(item, column).length - 3 }}
                         </span>
@@ -351,7 +329,6 @@ const getItemDisplayName = (item) => {
               </div>
             </div>
           </slot>
-                
         </div>
       </div>
 
@@ -360,10 +337,9 @@ const getItemDisplayName = (item) => {
         <div
           v-for="item in filteredItems"
           :key="item.id"
-          class="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden"
+          class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 border border-base-300"
         >
           <slot name="list-row" :item="item" :goToEdit="goToEdit" :confirmDelete="confirmDelete">
-            <!-- Default list row with image -->
             <div class="flex gap-6 p-6">
               <!-- Image/Avatar -->
               <div v-if="item.coverUrl || item.avatarUrl" class="flex-shrink-0">
@@ -371,14 +347,14 @@ const getItemDisplayName = (item) => {
                   :src="item.coverUrl || item.avatarUrl"
                   :alt="getItemDisplayName(item)"
                   :class="item.avatarUrl ? 'w-20 h-20 rounded-full' : 'w-28 h-36 rounded-xl'"
-                  class="object-cover shadow-md group-hover:shadow-lg transition-shadow"
+                  class="object-cover shadow-md"
                 />
               </div>
 
               <!-- Content -->
               <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-start gap-4 mb-3">
-                  <h3 class="font-bold text-xl text-gray-900 dark:text-gray-100">
+                  <h3 class="text-xl font-bold text-base-content">
                     {{ getItemDisplayName(item) }}
                   </h3>
 
@@ -386,7 +362,7 @@ const getItemDisplayName = (item) => {
                   <div class="flex gap-2 flex-shrink-0">
                     <button
                       @click="goToEdit(item.id)"
-                      class="p-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all"
+                      class="btn btn-primary btn-sm"
                       title="Edit"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -395,7 +371,7 @@ const getItemDisplayName = (item) => {
                     </button>
                     <button
                       @click="confirmDelete(item)"
-                      class="p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 transition-all"
+                      class="btn btn-error btn-sm"
                       title="Delete"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -408,14 +384,14 @@ const getItemDisplayName = (item) => {
                 <!-- Columns -->
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div v-for="column in config.columns.slice(1)" :key="column.key" class="text-sm">
-                    <span class="text-gray-500 dark:text-gray-400 block mb-1">{{ column.label }}</span>
-                    <span class="font-semibold text-gray-700 dark:text-gray-300">
+                    <span class="text-base-content/60 block mb-1">{{ column.label }}</span>
+                    <span class="font-semibold text-base-content">
                       <template v-if="column.type === 'tags'">
                         <div class="flex flex-wrap gap-1">
                           <span
                             v-for="(tag, idx) in getColumnValue(item, column)"
                             :key="idx"
-                            class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs rounded-full"
+                            class="badge badge-primary badge-sm"
                           >
                             {{ tag }}
                           </span>
@@ -445,39 +421,39 @@ const getItemDisplayName = (item) => {
     >
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+        class="modal modal-open"
         @click.self="cancelDelete"
       >
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-200 dark:border-gray-700">
+        <div class="modal-box">
           <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 rounded-2xl flex items-center justify-center">
-              <svg class="w-7 h-7 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-14 h-14 bg-error/20 rounded-2xl flex items-center justify-center">
+              <svg class="w-7 h-7 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Delete {{ config.entityName }}</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">This action cannot be undone</p>
+              <h3 class="font-bold text-xl text-base-content">Delete {{ config.entityName }}</h3>
+              <p class="text-sm text-base-content/60">This action cannot be undone</p>
             </div>
           </div>
 
-          <p class="text-gray-700 dark:text-gray-300 mb-8">
+          <p class="text-base-content mb-8">
             Are you sure you want to permanently delete
-            <span class="font-bold text-gray-900 dark:text-gray-100">
+            <span class="font-bold">
               "{{ itemToDelete ? getItemDisplayName(itemToDelete) : '' }}"
             </span>?
           </p>
 
-          <div class="flex gap-3">
+          <div class="modal-action">
             <button
               @click="cancelDelete"
-              class="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+              class="btn btn-ghost"
             >
               Cancel
             </button>
             <button
               @click="deleteItem"
-              class="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl"
+              class="btn btn-error"
             >
               Delete
             </button>

@@ -1,15 +1,15 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
+  <div data-theme="papyrus" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent p-4">
     <div class="card w-full max-w-md bg-base-100 shadow-2xl">
       <div class="card-body">
         <!-- Header -->
         <div class="text-center mb-6">
-          <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary-content" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
             </svg>
           </div>
-          <h2 class="text-3xl font-bold">Admin Login</h2>
+          <h2 class="text-3xl font-bold text-base-content">Admin Login</h2>
           <p class="text-base-content/60 mt-2">Books & Authors Management</p>
         </div>
 
@@ -61,8 +61,6 @@
           </button>
         </form>
 
-        
-
         <!-- Back to Home -->
         <div class="text-center mt-4">
           <router-link to="/" class="link link-primary">
@@ -103,13 +101,10 @@ const handleLogin = async () => {
   const result = await authStore.login(formData.value.email, formData.value.password)
 
   if (result.success) {
-    // Show success toast
     showToast('Welcome back! Login successful', 'success', 3000)
     
-    // Redirect to the page they tried to access or admin dashboard
     const redirect = route.query.redirect || '/admin'
     
-    // Small delay to show toast before redirect
     setTimeout(() => {
       router.push(redirect)
     }, 500)

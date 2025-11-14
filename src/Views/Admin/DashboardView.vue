@@ -11,7 +11,6 @@ const topTag = ref('-')
 const latestBooks = ref([])
 const loading = ref(true)
 
-
 const getAuthorName = (id) => authors.value.find(a => a.id == id)?.name || '-'
 
 const fetchDashboardData = async () => {
@@ -60,164 +59,167 @@ onMounted(fetchDashboardData)
 <template>
   <!-- Page Header -->
   <div class="mb-8">
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-8 shadow-xl">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent p-8 shadow-xl">
       <div class="relative z-10">
-        <h1 class="text-4xl sm:text-3xl font-bold text-white mb-2 drop-shadow-lg">📊 Dashboard Overview</h1>
-        <p class="text-indigo-100 text-lg sm:text-sm">Welcome back! Here's what's happening with your library</p>
+        <h1 class="text-4xl sm:text-3xl font-bold text-primary-content mb-2 drop-shadow-lg">📊 Dashboard Overview</h1>
+        <p class="text-primary-content/90 text-lg sm:text-sm">Welcome back! Here's what's happening with your library</p>
       </div>
-      <div class="absolute top-0 right-0 w-64 h-64 sm:w-40 sm:h-40 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-      <div class="absolute bottom-0 left-0 w-48 h-48 sm:w-32 sm:h-32 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+      <div class="absolute top-0 right-0 w-64 h-64 sm:w-40 sm:h-40 bg-base-100 opacity-10 rounded-full -mr-32 -mt-32"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 sm:w-32 sm:h-32 bg-base-100 opacity-10 rounded-full -ml-24 -mb-24"></div>
     </div>
   </div>
 
   <!-- Loading State -->
   <div v-if="loading" class="flex justify-center items-center py-20">
-    <div class="relative">
-      <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 dark:border-gray-700"></div>
-      <div class="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent absolute top-0 left-0"></div>
-    </div>
+    <span class="loading loading-spinner loading-lg text-primary"></span>
   </div>
 
   <div v-else>
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <!-- Total Books -->
-      <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 transform hover:-translate-y-1">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-            <span class="text-2xl sm:text-xl">📚</span>
+      <div class="group card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 transform hover:-translate-y-1">
+        <div class="card-body">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-primary-focus rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
+              <span class="text-2xl sm:text-xl">📚</span>
+            </div>
+            <span class="badge badge-primary">Total</span>
           </div>
-          <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full">
-            Total
-          </span>
+          <p class="text-4xl sm:text-3xl font-bold text-base-content mb-1">{{ booksCount }}</p>
+          <p class="text-base-content/70 text-sm font-medium">Books in Library</p>
         </div>
-        <p class="text-4xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ booksCount }}</p>
-        <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Books in Library</p>
       </div>
 
       <!-- Total Authors -->
-      <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 transform hover:-translate-y-1">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-            <span class="text-2xl sm:text-xl">✍️</span>
+      <div class="group card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 transform hover:-translate-y-1">
+        <div class="card-body">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-secondary to-secondary-focus rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
+              <span class="text-2xl sm:text-xl">✍️</span>
+            </div>
+            <span class="badge badge-secondary">Total</span>
           </div>
-          <span class="text-sm font-semibold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-3 py-1 rounded-full">
-            Total
-          </span>
+          <p class="text-4xl sm:text-3xl font-bold text-base-content mb-1">{{ authorsCount }}</p>
+          <p class="text-base-content/70 text-sm font-medium">Active Authors</p>
         </div>
-        <p class="text-4xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ authorsCount }}</p>
-        <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Active Authors</p>
       </div>
 
       <!-- Top Author -->
-      <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 transform hover:-translate-y-1">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-            <span class="text-2xl sm:text-xl">🏆</span>
+      <div class="group card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 transform hover:-translate-y-1">
+        <div class="card-body">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-accent to-accent-content rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
+              <span class="text-2xl sm:text-xl">🏆</span>
+            </div>
+            <span class="badge badge-accent">Top</span>
           </div>
-          <span class="text-sm font-semibold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
-            Top
-          </span>
+          <p class="text-xl sm:text-lg font-bold text-base-content mb-1 truncate">
+            {{ topAuthor?.name || 'N/A' }}
+          </p>
+          <p class="text-base-content/70 text-sm font-medium">Most Productive Author</p>
         </div>
-        <p class="text-xl sm:text-lg font-bold text-gray-900 dark:text-white mb-1 truncate">
-          {{ topAuthor?.name || 'N/A' }}
-        </p>
-        <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Most Productive Author</p>
       </div>
 
       <!-- Top Tag -->
-      <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 transform hover:-translate-y-1">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-            <span class="text-2xl sm:text-xl">🏷️</span>
+      <div class="group card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 transform hover:-translate-y-1">
+        <div class="card-body">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
+              <span class="text-2xl sm:text-xl">🏷️</span>
+            </div>
+            <span class="badge badge-outline">Popular</span>
           </div>
-          <span class="text-sm font-semibold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-3 py-1 rounded-full">
-            Popular
-          </span>
+          <p class="text-xl sm:text-lg font-bold text-base-content mb-1 truncate">
+            {{ topTag || 'N/A' }}
+          </p>
+          <p class="text-base-content/70 text-sm font-medium">Most Used Tag</p>
         </div>
-        <p class="text-xl sm:text-lg font-bold text-gray-900 dark:text-white mb-1 truncate">
-          {{ topTag || 'N/A' }}
-        </p>
-        <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Most Used Tag</p>
       </div>
     </div>
 
     <!-- Recent Books -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-x-auto">
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 class="text-2xl sm:text-xl font-bold text-gray-900 dark:text-white mb-1">📖 Recently Added Books</h2>
-          <p class="text-gray-500 dark:text-gray-400 text-sm">Latest additions to your library</p>
+    <div class="card bg-base-100 shadow-lg border border-base-300 overflow-x-auto">
+      <div class="card-body">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-2xl sm:text-xl font-bold text-base-content mb-1">📖 Recently Added Books</h2>
+            <p class="text-base-content/70 text-sm">Latest additions to your library</p>
+          </div>
+          <router-link
+            to="/admin/books"
+            class="btn btn-primary btn-sm"
+          >
+            View All →
+          </router-link>
         </div>
-        <router-link
-          to="/admin/books"
-          class="px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-all font-semibold text-sm"
-        >
-          View All →
-        </router-link>
-      </div>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-            <tr>
-              <th class="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Cover</th>
-              <th class="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Title</th>
-              <th class="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Author</th>
-              <th class="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Year</th>
-              <th class="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Tags</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <tr
-              v-for="book in latestBooks"
-              :key="book.id"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-            >
-              <td class="px-4 sm:px-6 py-2">
-                <img
-                  :src="book.coverUrl"
-                  :alt="book.title"
-                  class="w-12 sm:w-10 h-16 sm:h-14 object-cover rounded-lg shadow-sm"
-                />
-              </td>
-              <td class="px-4 sm:px-6 py-2">
-                <p class="font-semibold text-gray-900 dark:text-white text-sm sm:text-xs">{{ book.title }}</p>
-              </td>
-              <td class="px-4 sm:px-6 py-2">
-                <p class="text-gray-700 dark:text-gray-300 text-sm sm:text-xs">{{ getAuthorName(book.authorId) }}</p>
-              </td>
-              <td class="px-4 sm:px-6 py-2">
-                <p class="text-gray-700 dark:text-gray-300 text-sm sm:text-xs">{{ book.year }}</p>
-              </td>
-              <td class="px-4 sm:px-6 py-2">
-                <div class="flex flex-wrap gap-1">
-                  <span
-                    v-for="(tag, idx) in (book.tags || []).slice(0, 2)"
-                    :key="idx"
-                    class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs rounded-full font-semibold"
-                  >
-                    {{ tag }}
-                  </span>
-                  <span
-                    v-if="book.tags && book.tags.length > 2"
-                    class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full font-semibold"
-                  >
-                    +{{ book.tags.length - 2 }}
-                  </span>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="latestBooks.length === 0">
-              <td colspan="5" class="px-6 py-12 text-center">
-                <div class="text-gray-400 dark:text-gray-500">
-                  <span class="text-4xl mb-2 block">📚</span>
-                  <p class="text-sm">No books added yet</p>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th class="bg-base-200">Cover</th>
+                <th class="bg-base-200">Title</th>
+                <th class="bg-base-200">Author</th>
+                <th class="bg-base-200">Year</th>
+                <th class="bg-base-200">Tags</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="book in latestBooks"
+                :key="book.id"
+                class="hover"
+              >
+                <td>
+                  <div class="avatar">
+                    <div class="w-12 h-16 rounded-lg">
+                      <img
+                        :src="book.coverUrl"
+                        :alt="book.title"
+                        class="object-cover"
+                      />
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-semibold text-base-content text-sm">{{ book.title }}</p>
+                </td>
+                <td>
+                  <p class="text-base-content/80 text-sm">{{ getAuthorName(book.authorId) }}</p>
+                </td>
+                <td>
+                  <p class="text-base-content/80 text-sm">{{ book.year }}</p>
+                </td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span
+                      v-for="(tag, idx) in (book.tags || []).slice(0, 2)"
+                      :key="idx"
+                      class="badge badge-primary badge-sm"
+                    >
+                      {{ tag }}
+                    </span>
+                    <span
+                      v-if="book.tags && book.tags.length > 2"
+                      class="badge badge-ghost badge-sm"
+                    >
+                      +{{ book.tags.length - 2 }}
+                    </span>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="latestBooks.length === 0">
+                <td colspan="5" class="text-center py-12">
+                  <div class="text-base-content/50">
+                    <span class="text-4xl mb-2 block">📚</span>
+                    <p class="text-sm">No books added yet</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

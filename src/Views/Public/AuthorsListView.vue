@@ -1,16 +1,14 @@
 <template>
   <div class="p-6 md:p-8 bg-base-200 min-h-screen" dir="ltr">
+    
     <div class="max-w-6xl mx-auto card bg-base-100 shadow-xl">
       <div class="card-body">
         
         <h2 class="card-title text-3xl">Author Management</h2>
         <div class="divider"></div>
 
-        <!-- Search Section -->
         <div class="flex flex-col md:flex-row gap-4 mb-6">
-          <!-- Search by Name -->
           <div class="form-control flex-1">
-         
             <input 
               v-model="searchQuery" 
               type="text" 
@@ -19,12 +17,8 @@
             />
           </div>
 
-          <!-- Clear Search Button -->
           <div class="form-control">
-            <label class="label">
-              <span class="label-text">&nbsp;</span>
-            </label>
-            <button @click="clearSearch" class="btn btn-outline">
+            <button @click="clearSearch" class="btn btn-outline mt-auto">
               Clear Search
             </button>
           </div>
@@ -32,13 +26,11 @@
 
         
 
-        <!-- Loading State -->
         <div v-if="loading" class="text-center py-10">
           <span class="loading loading-lg loading-spinner text-primary"></span>
           <p class="mt-2">Loading authors...</p>
         </div>
 
-        <!-- Error State -->
         <div v-else-if="error" class="alert alert-error shadow-lg" role="alert">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -48,7 +40,6 @@
           </div>
         </div>
 
-        <!-- Authors Table -->
         <div v-else-if="filteredAuthors.length">
           <div class="overflow-x-auto">
             <table class="table w-full table-zebra">
@@ -57,7 +48,7 @@
                   <th>Image</th>
                   <th>Name</th>
                   <th>Bio / Description</th>
-                  <th>Genre / Specialty</th>
+                  
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -78,11 +69,7 @@
                       {{ author.bio }}
                     </span>
                   </td>
-                  <td>
-                    <span class="badge badge-primary badge-outline">
-                      {{ author.genre || 'General' }}
-                    </span>
-                  </td>
+                  
                   <td>
                     <button 
                       @click="goToAuthorDetails(author.id)" 
@@ -96,7 +83,6 @@
             </table>
           </div>
           
-          <!-- Pagination -->
           <div v-if="totalPages > 1" class="flex justify-center pt-6 gap-2">
             <button @click="prevPage" :disabled="currentPage === 1" class="btn">«</button>
             
@@ -114,7 +100,6 @@
           </div>
         </div>
         
-        <!-- Empty State -->
         <div v-else class="alert alert-info shadow-lg">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
@@ -130,6 +115,7 @@
 </template>
 
 <script setup>
+// كود الجافاسكربت زي ما هو بالظبط، مفيهوش أي تغيير
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from '@/composables/useToast';
@@ -152,123 +138,123 @@ const itemsPerPage = ref(5);
 
 // Fetch authors
 async function fetchAuthors() {
-  try {
-    const response = await axios.get('http://localhost:3000/authors');
-    authors.value = response.data;
-    
-    // Show success toast
-    if (authors.value.length > 0) {
-      showToast(`Loaded ${authors.value.length} authors successfully`, 'success');
-    }
-  } catch (err) {
-    console.error('Failed to fetch authors:', err);
-    error.value = err;
-    showToast('Failed to load authors. Please try again.', 'error');
-  } finally {
-    loading.value = false;
-  }
+  try {
+    const response = await axios.get('http://localhost:3000/authors');
+    authors.value = response.data;
+    
+    // Show success toast
+    if (authors.value.length > 0) {
+      showToast(`Loaded ${authors.value.length} authors successfully`, 'success');
+    }
+  } catch (err) {
+    console.error('Failed to fetch authors:', err);
+    error.value = err;
+    showToast('Failed to load authors. Please try again.', 'error');
+  } finally {
+    loading.value = false;
+  }
 }
 
 // Filtered authors based on search
 const filteredAuthors = computed(() => {
-  if (!searchQuery.value.trim()) {
-    return authors.value;
-  }
+  if (!searchQuery.value.trim()) {
+    return authors.value;
+  }
 
-  const query = searchQuery.value.toLowerCase();
-  return authors.value.filter(author =>
-    author.name.toLowerCase().includes(query)
-  );
+  const query = searchQuery.value.toLowerCase();
+  return authors.value.filter(author =>
+    author.name.toLowerCase().includes(query)
+  );
 });
 
 // Total pages based on filtered results
 const totalPages = computed(() => {
-  return Math.ceil(filteredAuthors.value.length / itemsPerPage.value);
+  return Math.ceil(filteredAuthors.value.length / itemsPerPage.value);
 });
 
 // Paginated authors
 const paginatedAuthors = computed(() => {
-  const startIndex = (currentPage.value - 1) * itemsPerPage.value;
-  const endIndex = startIndex + itemsPerPage.value;
-  return filteredAuthors.value.slice(startIndex, endIndex);
+  const startIndex = (currentPage.value - 1) * itemsPerPage.value;
+  const endIndex = startIndex + itemsPerPage.value;
+  return filteredAuthors.value.slice(startIndex, endIndex);
 });
 
 // Display limited page numbers for pagination
 const displayedPages = computed(() => {
-  const pages = [];
-  const maxDisplayed = 5;
-  
-  if (totalPages.value <= maxDisplayed) {
-    for (let i = 1; i <= totalPages.value; i++) {
-      pages.push(i);
-    }
-  } else {
-    if (currentPage.value <= 3) {
-      for (let i = 1; i <= 4; i++) pages.push(i);
-      pages.push('...');
-      pages.push(totalPages.value);
-    } else if (currentPage.value >= totalPages.value - 2) {
-      pages.push(1);
-      pages.push('...');
-      for (let i = totalPages.value - 3; i <= totalPages.value; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      pages.push('...');
-      pages.push(currentPage.value - 1);
-      pages.push(currentPage.value);
-      pages.push(currentPage.value + 1);
-      pages.push('...');
-      pages.push(totalPages.value);
-    }
-  }
-  
-  return pages;
+  const pages = [];
+  const maxDisplayed = 5;
+  
+  if (totalPages.value <= maxDisplayed) {
+    for (let i = 1; i <= totalPages.value; i++) {
+      pages.push(i);
+    }
+  } else {
+    if (currentPage.value <= 3) {
+      for (let i = 1; i <= 4; i++) pages.push(i);
+      pages.push('...');
+      pages.push(totalPages.value);
+  S } else if (currentPage.value >= totalPages.value - 2) {
+      pages.push(1);
+      pages.push('...');
+      for (let i = totalPages.value - 3; i <= totalPages.value; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      pages.push('...');
+      pages.push(currentPage.value - 1);
+      pages.push(currentPage.value);
+      pages.push(currentPage.value + 1);
+      pages.push('...');
+      pages.push(totalPages.value);
+    }
+  }
+  
+  return pages;
 });
 
 // Navigation functions
 function goToPage(page) {
-  if (page !== '...') {
-    currentPage.value = page;
-  }
+  if (page !== '...') {
+    currentPage.value = page;
+  }
 }
 
 function prevPage() {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
 }
 
 function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
 }
 
 function goToAuthorDetails(authorId) {
-  router.push({ name: 'author-details', params: { id: authorId } });
+  router.push({ name: 'author-details', params: { id: authorId } });
 }
 
 function clearSearch() {
-  searchQuery.value = '';
-  currentPage.value = 1;
-  showToast('Search cleared', 'info');
+  searchQuery.value = '';
+  currentPage.value = 1;
+  showToast('Search cleared', 'info');
 }
 
 // Reset to page 1 when search changes
 watch(searchQuery, () => {
-  currentPage.value = 1;
+  currentPage.value = 1;
 });
 
 // Show toast when no results found
 watch(filteredAuthors, (newVal) => {
-  if (!loading.value && newVal.length === 0 && searchQuery.value) {
-    showToast('No authors found matching your criteria', 'info');
-  }
+  if (!loading.value && newVal.length === 0 && searchQuery.value) {
+    showToast('No authors found matching your criteria', 'info');
+  }
 });
 
 onMounted(fetchAuthors);
 </script>
 
 <style scoped>
-
+/* No styles needed */
 </style>

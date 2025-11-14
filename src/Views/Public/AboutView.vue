@@ -24,8 +24,8 @@
         Alexandria — sacred spaces where wisdom was inked onto papyrus scrolls under
         golden lamplight. Reviving this legacy, our library brings together timeless
         knowledge and modern discovery. Every book here is a whisper from the past and
-        a promise for the future, echoing the spirit of Egypt’s ancient scribes who
-        believed that “to write was to give life eternal.”
+        a promise for the future, echoing the spirit of Egypt's ancient scribes who
+        believed that "to write was to give life eternal."
       </p>
     </section>
 
@@ -36,36 +36,42 @@
       </h2>
 
       <div class="space-y-4">
-        <transition-group name="scale-faq" tag="div">
-          <div
-            v-for="(faq, index) in faqs"
-            :key="index"
+        <div
+          v-for="(faq, index) in faqs"
+          :key="index"
+          :class="[
+            'border border-[#cbb994] rounded-lg bg-[#faf5e1] shadow-sm transition-all duration-300 overflow-hidden',
+            openIndex === index ? 'shadow-lg bg-[#fff6d9]' : 'hover:shadow-md',
+          ]"
+        >
+          <div 
             @click="toggleFAQ(index)"
-            :class="[
-              'cursor-pointer border border-[#cbb994] rounded-lg bg-[#faf5e1] p-4 shadow-sm transition transform duration-300',
-              openIndex === index ? 'scale-110 shadow-md bg-[#fff6d9]' : 'hover:shadow-md',
-            ]"
+            class="cursor-pointer p-4 flex justify-between items-center"
           >
-            <div class="flex justify-between items-center">
-              <h3 class="font-semibold text-lg text-[#3a2f1f]">{{ faq.question }}</h3>
-              <span
-                class="text-[#a67c00] font-bold text-xl transition-transform"
-                :class="{ 'rotate-45': openIndex === index }"
-              >
-                +
-              </span>
-            </div>
+            <h3 class="font-semibold text-lg text-[#3a2f1f]">{{ faq.question }}</h3>
+            <span
+              class="text-[#a67c00] font-bold text-2xl transition-transform duration-300"
+              :class="{ 'rotate-45': openIndex === index }"
+            >
+              +
+            </span>
+          </div>
 
-            <transition name="fade">
-              <p
-                v-if="openIndex === index"
-                class="mt-2 text-[#4a3f2b] leading-relaxed"
-              >
+          <transition
+            name="slide-fade"
+            @enter="enter"
+            @leave="leave"
+          >
+            <div
+              v-show="openIndex === index"
+              class="px-4 pb-4"
+            >
+              <p class="text-[#4a3f2b] leading-relaxed">
                 {{ faq.answer }}
               </p>
-            </transition>
-          </div>
-        </transition-group>
+            </div>
+          </transition>
+        </div>
       </div>
     </section>
   </div>
@@ -80,11 +86,24 @@ const toggleFAQ = (index) => {
   openIndex.value = openIndex.value === index ? null : index;
 };
 
+// Animation hooks for smooth height transition
+const enter = (el) => {
+  el.style.height = '0';
+  el.offsetHeight; // Force reflow
+  el.style.height = el.scrollHeight + 'px';
+};
+
+const leave = (el) => {
+  el.style.height = el.scrollHeight + 'px';
+  el.offsetHeight; // Force reflow
+  el.style.height = '0';
+};
+
 const faqs = [
   {
     question: "What is the House of Papyrus?",
     answer:
-      "It’s an online library inspired by ancient Egyptian knowledge, bringing together timeless literature and modern storytelling.",
+      "It's an online library inspired by ancient Egyptian knowledge, bringing together timeless literature and modern storytelling.",
   },
   {
     question: "How can I borrow or buy a book?",
@@ -135,17 +154,15 @@ const faqs = [
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.4s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+/* Slide and fade animation */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-.scale-faq-enter-active,
-.scale-faq-leave-active {
-  transition: transform 0.3s ease;
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  opacity: 0;
 }
 </style>

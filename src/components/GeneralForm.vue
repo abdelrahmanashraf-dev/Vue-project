@@ -16,7 +16,6 @@ const props = defineProps({
   config: {
     type: Object,
     required: true
-    
   }
 })
 
@@ -68,7 +67,6 @@ onMounted(async () => {
 
 const loadItem = async () => {
   try {
-    // Call the appropriate fetch method
     await props.store.fetchBookById?.(route.params.id) || 
           await props.store.fetchAuthorById?.(route.params.id)
     
@@ -83,8 +81,6 @@ const loadItem = async () => {
         }
       })
       
-      // Validate all fields after loading to clear any errors
-      // This ensures the form is valid when loaded with existing data
       await Promise.all(
         props.config.fields.map(field => validateField(field))
       )
@@ -99,13 +95,11 @@ const loadItem = async () => {
 const validateField = async (field) => {
   const value = form.value[field.key]
   
-  // Required check
   if (field.required && !value) {
     errors.value[field.key] = `${field.label} is required`
     return false
   }
 
-  // Type-specific validation
   if (field.type === 'text' || field.type === 'textarea') {
     if (field.minLength && value.length < field.minLength) {
       errors.value[field.key] = `${field.label} must be at least ${field.minLength} characters`
@@ -132,7 +126,6 @@ const validateField = async (field) => {
   }
 
   if (field.type === 'url' && value) {
-    // Accept both absolute URLs and local paths
     const isAbsoluteUrl = value.startsWith('http://') || value.startsWith('https://')
     const isLocalPath = value.startsWith('/') || value.startsWith('./') || value.startsWith('../')
     
@@ -167,7 +160,6 @@ const validateField = async (field) => {
     }
   }
 
-  // Check if select value exists (validate via API)
   if (field.type === 'select' && field.validateExists && value) {
     try {
       const endpoint = field.validateEndpoint || `http://localhost:3000/${field.key.replace('Id', 's')}/${value}`
@@ -234,29 +226,24 @@ const removeTag = (field, index) => {
 
 // Form validity
 const isFormValid = computed(() => {
-  // Check all required fields have values
   for (const field of props.config.fields) {
     const value = form.value[field.key]
     
-    // Required field validation
     if (field.required) {
       if (!value || (Array.isArray(value) && value.length === 0)) {
         return false
       }
     }
     
-    // Check for errors
     if (errors.value[field.key]) {
       return false
     }
     
-    // Basic length validations for text fields
     if ((field.type === 'text' || field.type === 'textarea') && value) {
       if (field.minLength && value.length < field.minLength) return false
       if (field.maxLength && value.length > field.maxLength) return false
     }
     
-    // Number range validation
     if (field.type === 'number' && value) {
       const min = field.min
       const max = typeof field.max === 'function' ? field.max() : field.max
@@ -276,7 +263,6 @@ const getSelectOptions = (field) => {
 
 // Submit
 const submitForm = async () => {
-  // Validate all fields
   const validations = await Promise.all(
     props.config.fields.map(field => validateField(field))
   )
@@ -286,7 +272,6 @@ const submitForm = async () => {
     return
   }
 
-  // Check for duplicates if configured
   if (props.config.checkDuplicate) {
     const duplicateError = await props.config.checkDuplicate(
       form.value,
@@ -306,7 +291,6 @@ const submitForm = async () => {
   try {
     const itemData = { ...form.value }
     
-    // Convert numeric fields
     props.config.fields.forEach(field => {
       if (field.type === 'number') {
         itemData[field.key] = parseInt(itemData[field.key])
@@ -316,15 +300,13 @@ const submitForm = async () => {
       }
     })
 
-    // Add timestamps (but NOT id - let the store handle it)
     if (isEditMode.value) {
       const existingItem = props.store.selectedBook || props.store.selectedAuthor
-      itemData.id = existingItem?.id // Keep existing ID for updates
+      itemData.id = existingItem?.id
       itemData.createdAt = existingItem?.createdAt
       itemData.updatedAt = new Date().toISOString()
     } else {
-      // DO NOT add id here - the store's addBook/addAuthor will handle it
-      delete itemData.id // Remove if exists
+      delete itemData.id
       itemData.createdAt = new Date().toISOString()
       itemData.updatedAt = new Date().toISOString()
     }
@@ -334,7 +316,6 @@ const submitForm = async () => {
             await props.store.updateAuthor?.(route.params.id, itemData)
       showToast(`${props.config.entityName} updated successfully!`, 'success')
     } else {
-      // The store will handle the refresh internally after adding
       await props.store.addBook?.(itemData) ||
             await props.store.addAuthor?.(itemData)
       
@@ -365,39 +346,39 @@ const closeToast = () => {
 </script>
 
 <template>
-  <div class="min-h-screen transition-colors duration-200">
+  <div data-theme="papyrus" class="min-h-screen transition-colors duration-200">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
       <!-- Header -->
       <div class="mb-8">
         <button
           @click="cancel"
-          class="group flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 mb-6 transition-all font-medium"
+          class="btn btn-ghost gap-2 mb-6"
         >
-          <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
           Back to {{ config.entityNamePlural }}
         </button>
         
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-8 shadow-xl">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent p-8 shadow-xl">
           <div class="relative z-10">
-            <h1 class="text-4xl font-bold text-white mb-2 drop-shadow-lg">
+            <h1 class="text-4xl font-bold text-primary-content mb-2 drop-shadow-lg">
               {{ isEditMode ? '✏️' : '➕' }} {{ pageTitle }}
             </h1>
-            <p class="text-indigo-100 text-lg">
+            <p class="text-primary-content/90 text-lg">
               {{ isEditMode 
                 ? `Update the ${config.entityName.toLowerCase()} information below` 
                 : `Fill in the details to add a new ${config.entityName.toLowerCase()}` 
               }}
             </p>
           </div>
-          <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-          <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+          <div class="absolute top-0 right-0 w-64 h-64 bg-base-100 opacity-10 rounded-full -mr-32 -mt-32"></div>
+          <div class="absolute bottom-0 left-0 w-48 h-48 bg-base-100 opacity-10 rounded-full -ml-24 -mb-24"></div>
         </div>
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="submitForm" class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
+      <form @submit.prevent="submitForm" class="card bg-base-100 shadow-xl p-8 border border-base-300">
         <div class="space-y-6">
           <div
             v-for="field in config.fields"
@@ -405,60 +386,65 @@ const closeToast = () => {
             :class="field.type === 'tags' ? 'col-span-full' : ''"
           >
             <!-- Text Input -->
-            <div v-if="field.type === 'text'">
-              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                {{ field.icon }} {{ field.label }}
-                <span v-if="field.required" class="text-red-500">*</span>
+            <div v-if="field.type === 'text'" class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">
+                  {{ field.icon }} {{ field.label }}
+                  <span v-if="field.required" class="text-error">*</span>
+                </span>
               </label>
               <input
                 v-model="form[field.key]"
                 type="text"
                 :placeholder="`Enter ${field.label.toLowerCase()}`"
-                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100"
-                :class="errors[field.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"
+                class="input input-bordered"
+                :class="errors[field.key] ? 'input-error' : ''"
                 @blur="validateField(field)"
               />
-              <div class="flex justify-between items-center mt-1">
-                <p v-if="errors[field.key]" class="text-red-500 text-sm flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
-                  </svg>
+              <label class="label">
+                <span v-if="errors[field.key]" class="label-text-alt text-error">
                   {{ errors[field.key] }}
-                </p>
-                <p v-if="field.maxLength" class="text-gray-500 text-sm ml-auto">
+                </span>
+                <span v-if="field.maxLength" class="label-text-alt">
                   {{ form[field.key].length }}/{{ field.maxLength }}
-                </p>
-              </div>
+                </span>
+              </label>
             </div>
 
             <!-- Number Input -->
-            <div v-else-if="field.type === 'number'">
-              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                {{ field.icon }} {{ field.label }}
-                <span v-if="field.required" class="text-red-500">*</span>
+            <div v-else-if="field.type === 'number'" class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">
+                  {{ field.icon }} {{ field.label }}
+                  <span v-if="field.required" class="text-error">*</span>
+                </span>
               </label>
               <input
                 v-model.number="form[field.key]"
                 type="number"
                 :min="field.min"
                 :max="typeof field.max === 'function' ? field.max() : field.max"
-                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100"
-                :class="errors[field.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"
+                class="input input-bordered"
+                :class="errors[field.key] ? 'input-error' : ''"
                 @blur="validateField(field)"
               />
-              <p v-if="errors[field.key]" class="text-red-500 text-sm mt-1">{{ errors[field.key] }}</p>
+              <label v-if="errors[field.key]" class="label">
+                <span class="label-text-alt text-error">{{ errors[field.key] }}</span>
+              </label>
             </div>
 
             <!-- Select -->
-            <div v-else-if="field.type === 'select'">
-              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                {{ field.icon }} {{ field.label }}
-                <span v-if="field.required" class="text-red-500">*</span>
+            <div v-else-if="field.type === 'select'" class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">
+                  {{ field.icon }} {{ field.label }}
+                  <span v-if="field.required" class="text-error">*</span>
+                </span>
               </label>
               <select
                 v-model="form[field.key]"
-                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100"
-                :class="errors[field.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"
+                class="select select-bordered"
+                :class="errors[field.key] ? 'select-error' : ''"
                 @change="validateField(field)"
               >
                 <option value="">Select {{ field.label.toLowerCase() }}</option>
@@ -470,113 +456,119 @@ const closeToast = () => {
                   {{ field.optionLabel(option) }}
                 </option>
               </select>
-              <p v-if="errors[field.key]" class="text-red-500 text-sm mt-1">{{ errors[field.key] }}</p>
+              <label v-if="errors[field.key]" class="label">
+                <span class="label-text-alt text-error">{{ errors[field.key] }}</span>
+              </label>
             </div>
 
             <!-- Tags -->
-            <div v-else-if="field.type === 'tags'">
-              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                {{ field.icon }} {{ field.label }}
-                <span v-if="field.maxItems">(Max {{ field.maxItems }})</span>
+            <div v-else-if="field.type === 'tags'" class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">
+                  {{ field.icon }} {{ field.label }}
+                  <span v-if="field.maxItems">(Max {{ field.maxItems }})</span>
+                </span>
               </label>
-              <div class="flex gap-2 mb-3">
+              <div class="join">
                 <input
                   v-model="tagInput"
                   type="text"
                   :placeholder="`Add a ${field.label.toLowerCase().slice(0, -1)}`"
-                  class="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100"
+                  class="input input-bordered join-item flex-1"
                   @keyup.enter="addTag(field)"
                 />
                 <button
                   type="button"
                   @click="addTag(field)"
                   :disabled="field.maxItems && form[field.key].length >= field.maxItems"
-                  class="px-6 py-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-bold rounded-xl hover:bg-indigo-200 dark:hover:bg-indigo-900/60 transition-all disabled:opacity-50"
+                  class="btn btn-primary join-item"
                 >
                   Add
                 </button>
               </div>
 
-              <div v-if="form[field.key].length > 0" class="flex flex-wrap gap-2 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600 mb-2">
-                <span
+              <div v-if="form[field.key].length > 0" class="flex flex-wrap gap-2 mt-3 p-4 bg-base-200 rounded-lg">
+                <div
                   v-for="(tag, idx) in form[field.key]"
                   :key="idx"
-                  class="px-4 py-2 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-semibold flex items-center gap-2"
+                  class="badge badge-primary gap-2"
                 >
                   {{ tag }}
-                  <button type="button" @click="removeTag(field, idx)" class="text-indigo-700 dark:text-indigo-300 hover:text-red-600 font-bold text-lg">×</button>
-                </span>
+                  <button type="button" @click="removeTag(field, idx)" class="btn btn-ghost btn-xs btn-circle">×</button>
+                </div>
               </div>
 
-              <div class="flex justify-between">
-                <p v-if="errors[field.key]" class="text-red-500 text-sm">{{ errors[field.key] }}</p>
-                <p class="text-gray-500 text-sm ml-auto">{{ form[field.key].length }}/{{ field.maxItems || '∞' }}</p>
-              </div>
+              <label class="label">
+                <span v-if="errors[field.key]" class="label-text-alt text-error">{{ errors[field.key] }}</span>
+                <span class="label-text-alt">{{ form[field.key].length }}/{{ field.maxItems || '∞' }}</span>
+              </label>
             </div>
 
             <!-- Textarea -->
-            <div v-else-if="field.type === 'textarea'">
-              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                {{ field.icon }} {{ field.label }}
+            <div v-else-if="field.type === 'textarea'" class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">{{ field.icon }} {{ field.label }}</span>
               </label>
               <textarea
                 v-model="form[field.key]"
                 :rows="field.rows || 4"
                 :placeholder="`Enter ${field.label.toLowerCase()}`"
-                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none text-gray-900 dark:text-gray-100"
-                :class="errors[field.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"
+                class="textarea textarea-bordered"
+                :class="errors[field.key] ? 'textarea-error' : ''"
                 @blur="validateField(field)"
               ></textarea>
-              <div class="flex justify-between mt-1">
-                <p v-if="errors[field.key]" class="text-red-500 text-sm">{{ errors[field.key] }}</p>
-                <p v-if="field.maxLength" class="text-gray-500 text-sm ml-auto">
+              <label class="label">
+                <span v-if="errors[field.key]" class="label-text-alt text-error">{{ errors[field.key] }}</span>
+                <span v-if="field.maxLength" class="label-text-alt">
                   {{ form[field.key].length }}/{{ field.maxLength }}
-                </p>
-              </div>
+                </span>
+              </label>
             </div>
 
             <!-- URL -->
-            <div v-else-if="field.type === 'url'">
-              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                {{ field.icon }} {{ field.label }}
+            <div v-else-if="field.type === 'url'" class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">{{ field.icon }} {{ field.label }}</span>
               </label>
               <input
                 v-model="form[field.key]"
                 type="text"
-                :placeholder="`https://example.com/image.jpg or /images/cover.jpg`"
-                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-gray-100"
-                :class="errors[field.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"
+                placeholder="https://example.com/image.jpg or /images/cover.jpg"
+                class="input input-bordered"
+                :class="errors[field.key] ? 'input-error' : ''"
                 @blur="validateField(field)"
               />
-              <p v-if="errors[field.key]" class="text-red-500 text-sm mt-1">{{ errors[field.key] }}</p>
+              <label v-if="errors[field.key]" class="label">
+                <span class="label-text-alt text-error">{{ errors[field.key] }}</span>
+              </label>
             </div>
           </div>
         </div>
 
         <!-- Actions -->
-        <div class="flex gap-4 justify-end mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <div class="card-actions justify-end mt-8 pt-8 border-t border-base-300">
           <button
             type="button"
             @click="cancel"
-            class="px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+            class="btn btn-ghost"
           >
             Cancel
           </button>
           <button
             type="submit"
             :disabled="!isFormValid || submitting"
-            class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50"
+            class="btn btn-primary"
           >
+            <span v-if="submitting" class="loading loading-spinner loading-sm"></span>
             <span v-if="submitting">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
             <span v-else>{{ isEditMode ? `Update ${config.entityName}` : `Create ${config.entityName}` }}</span>
           </button>
         </div>
 
         <!-- Validation Warning -->
-        <div v-if="!isFormValid && !isEditMode" class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
-          <p class="text-sm text-yellow-700 dark:text-yellow-400">
-            Please fill in all required fields marked with <span class="text-red-500">*</span>
-          </p>
+        <div v-if="!isFormValid && !isEditMode" class="alert alert-warning mt-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          <span>Please fill in all required fields marked with <span class="text-error">*</span></span>
         </div>
       </form>
 
