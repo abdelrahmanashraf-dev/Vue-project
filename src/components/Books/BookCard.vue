@@ -1,53 +1,78 @@
 <template>
-  <div class="bg-[#f8f5f0] shadow-md w-full max-w-md mx-auto rounded-xl flex flex-col sm:flex-row overflow-hidden min-w-0">
-    <figure class="flex-shrink-0 w-full sm:w-48">
+  <!-- 
+    ده الكود بالثيم اللي عملناه (papyrus)
+    bg-base-100 (الكريمي)
+  -->
+  <div class="bg-base-100 shadow-md w-full max-w-md mx-auto rounded-xl flex flex-col xl:flex-row overflow-hidden min-w-0">
+    
+    <!-- 
+      استخدمنا xl: عشان الريسبونسيف
+    -->
+    <figure class="flex-shrink-0 w-full xl:w-48">
       <img
         :src="book.coverUrl"
         :alt="book.title"
-        class="w-full h-64 sm:h-full object-cover"
+        class="w-full h-64 xl:h-full object-cover"
       />
-      </figure>
+    </figure>
 
-    <div class="p-4 sm:p-6 flex flex-col justify-between">
+    <!-- 
+      ضفنا min-w-0 عشان نحل مشكلة قص الكلام
+    -->
+    <div class="p-4 xl:p-6 flex flex-col justify-between min-w-0">
       <div>
-        <h2 class="text-lg sm:text-xl font-semibold text-[#d4af37] text-left mb-1">
+        <!-- 
+          text-primary (اللون الذهبي من الثيم)
+        -->
+        <h2 class="text-lg xl:text-xl font-semibold text-primary text-left mb-1">
           {{ book.title }}
         </h2>
-        <p class="text-sm text-[#bfa76f] text-left mb-3">{{ book.year }}</p>
+        <!-- 
+          text-secondary (اللون الثانوي من الثيم)
+        -->
+        <p class="text-sm text-secondary text-left mb-3">{{ book.year }}</p>
 
-        <p class="text-sm text-gray-600 text-left mb-4">
+        <!-- 
+          text-base-content (لون التيكست الأساسي)
+          break-words (عشان الريسبونسيف)
+        -->
+        <p class="text-sm text-base-content/70 text-left mb-4 break-words">
           {{ book.description }}
         </p>
       </div>
 
       <div class="flex justify-center">
-        <button class="bg-[#d4af37] hover:bg-[#c19e35] text-white font-medium py-2 px-8 sm:px-10 rounded-lg transition-colors duration-200 w-full sm:w-auto">
+        <!-- 
+          *** التعديل اللي طلبته اهو ***
+          
+          1. استبدلنا <button> بـ <router-link>
+          2. ضيفنا ":to" عشان نربطه بـ id الكتاب
+          3. استخدمنا كلاسات "btn btn-primary" من الثيم
+        -->
+        <router-link
+          :to="'/books/' + book.id"
+          class="btn btn-primary w-full xl:w-auto"
+        >
           Details
-        </button>
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+// كود الجافاسكربت زي ما هو
 export default {
-  name: "BookCard",
-  props: {
-    book: {
-      type: Object,
-      required: true,
-      // ضفت default بسيط عشان لو بتجرب الكومبوننت لوحده
-      default: () => ({
-        coverUrl: 'https://via.placeholder.com/192x256',
-        title: 'Book Title',
-        year: '2025',
-        description: 'This is a short description of the book.'
-      })
-    },
-  },
+  name: "BookCard",
+  props: {
+    book: {
+      type: Object,
+      required: true,
+    },
+  },
 };
 </script>
 
 <style scoped>
-/* مفيش حاجة هنا حالياً، لكن ممكن تضيف أي ستايلات خاصة بالكومبوننت ده لو احتجت */
+/* No styles needed */
 </style>

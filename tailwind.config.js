@@ -1,6 +1,6 @@
 // tailwind.config.js
 
-import daisyui from "daisyui"; // <-- اتأكد إنها import فوق
+import daisyui from "daisyui"; 
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -12,9 +12,8 @@ export default {
     extend: {},
   },
   
-  plugins: [daisyui], // <-- اتأكد إنها هنا
+  plugins: [daisyui], 
 
-  // vvv اتأكد إن الكود ده موجود جوه الـ export default vvv
   daisyui: {
     themes: [
       "light",

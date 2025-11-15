@@ -88,9 +88,9 @@
                   <td>
                     <button 
                       @click="goToBookDetails(book.id)" 
-                      class="btn btn-sm btn-primary px-4"
+                      class="btn btn-sm btn-primary flex items-center justify-center gap-2"
                     >
-                      View Details
+                      <span class="whitespace-nowrap">View Details</span>
                     </button>
                   </td>
                 </tr>
@@ -131,12 +131,12 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router'; // 👈 أضف useRoute
+import { useRouter, useRoute } from 'vue-router';
 import { useToast } from '@/composables/useToast';
 import axios from 'axios';
 
 const router = useRouter();
-const route = useRoute(); // 👈 استخدم route عشان تقرا الـ query
+const route = useRoute();
 const { showToast } = useToast();
 
 // State variables
@@ -190,6 +190,15 @@ async function fetchBooks() {
 // Get author name by ID (optimized with Map)
 function getAuthorName(authorId) {
   return authorMap.value.get(Number(authorId)) || 'Unknown Author';
+}
+
+// Initialize search from URL query parameter
+function initializeSearchFromQuery() {
+  const queryParam = route.query.q;
+  if (queryParam && typeof queryParam === 'string') {
+    searchQuery.value = queryParam;
+    showToast(`Searching for: ${queryParam}`, 'info');
+  }
 }
 
 // Filtered books based on search and author filter
@@ -286,7 +295,7 @@ function clearFilters() {
   selectedAuthorId.value = '';
   currentPage.value = 1;
   
-  // 👈 امسح الـ query parameter من الـ URL
+  // Clear query parameter from URL
   router.replace({ query: {} });
   
   showToast('Filters cleared', 'info');
@@ -304,15 +313,11 @@ watch(filteredBooks, (newVal) => {
   }
 });
 
-// 🎯 اقرا الـ query parameter من الـ URL لما الصفحة تفتح
-watch(() => route.query.q, (newQuery) => {
-  if (newQuery) {
-    searchQuery.value = newQuery;
-    showToast(`Searching for: ${newQuery}`, 'info');
-  }
-}, { immediate: true }); // 👈 immediate: true عشان يشتغل أول ما الصفحة تحمل
-
 onMounted(async () => {
+  // Initialize search from URL first
+  initializeSearchFromQuery();
+  
+  // Then fetch data
   await fetchAuthors();
   await fetchBooks();
 });
