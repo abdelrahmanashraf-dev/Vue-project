@@ -44,6 +44,7 @@ const bookFormConfig = {
       key: 'tags',
       label: 'Tags',
       type: 'tags',
+      required: true,
       maxItems: 8,
       minLength: 2,
       maxLength: 20,
@@ -53,12 +54,14 @@ const bookFormConfig = {
       key: 'coverUrl',
       label: 'Cover Image URL',
       type: 'url',
+      required: true,
       icon: 'fas fa-image'
     },
     {
       key: 'description',
       label: 'Description',
       type: 'textarea',
+      required: true,
       maxLength: 2000,
       rows: 6,
       icon: 'fas fa-align-left'

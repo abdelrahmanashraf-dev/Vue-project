@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import Toast from '@/components/Ui/Toast.vue'
+import { useToast } from '@/composables/useToast'
 import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue'
 import EmptyState from '@/components/Ui/EmptyState.vue'
 import axios from 'axios'
@@ -23,13 +23,14 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
+const { showToast } = useToast()
 
 const isEditMode = computed(() => !!route.params.id)
 const pageTitle = computed(() => 
   isEditMode.value ? `Edit ${props.config.entityName}` : `Add New ${props.config.entityName}`
 )
 
-
+// Initialize form
 const initForm = () => {
   const formData = {}
   props.config.fields.forEach(field => {
@@ -45,29 +46,25 @@ const initForm = () => {
 }
 
 const form = ref(initForm())
+const originalForm = ref({})
 const errors = ref({})
 const tagInput = ref('')
 const submitting = ref(false)
 const loading = ref(false)
 const loadError = ref(null)
 
-const toast = ref({
-  show: false,
-  message: '',
-  type: 'success'
-})
-
+// Load data on mount
 onMounted(async () => {
   loading.value = true
   loadError.value = null
   
   try {
-    
+    // Load related data (authors/books)
     if (props.relatedStore) {
       await props.relatedStore.fetchAuthors?.() || await props.relatedStore.fetchBooks?.()
     }
 
-    
+    // Load item for edit mode
     if (isEditMode.value) {
       await loadItem()
     }
@@ -89,8 +86,10 @@ const loadItem = async () => {
       props.config.fields.forEach(field => {
         if (field.type === 'tags' && Array.isArray(item[field.key])) {
           form.value[field.key] = [...item[field.key]]
+          originalForm.value[field.key] = [...item[field.key]]
         } else {
           form.value[field.key] = item[field.key]
+          originalForm.value[field.key] = item[field.key]
         }
       })
       
@@ -124,7 +123,7 @@ const retryLoad = async () => {
   }
 }
 
-
+// Validation
 const validateField = async (field) => {
   const value = form.value[field.key]
   
@@ -159,8 +158,15 @@ const validateField = async (field) => {
   }
 
   if (field.type === 'url' && value) {
+    const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i
     const isAbsoluteUrl = value.startsWith('http://') || value.startsWith('https://')
     const isLocalPath = value.startsWith('/') || value.startsWith('./') || value.startsWith('../')
+    
+    // Check if it's a valid image extension
+    if (!imageExtensions.test(value)) {
+      errors.value[field.key] = 'URL must end with a valid image extension (.jpg, .png, .gif, .webp, .svg)'
+      return false
+    }
     
     if (isAbsoluteUrl) {
       try {
@@ -213,14 +219,14 @@ const validateField = async (field) => {
   return true
 }
 
-
+// Watch for field changes
 props.config.fields.forEach(field => {
   if (field.type !== 'tags') {
     watch(() => form.value[field.key], () => validateField(field))
   }
 })
 
-
+// Tags management
 const addTag = (field) => {
   const tag = tagInput.value.trim()
   if (!tag) return
@@ -257,8 +263,31 @@ const removeTag = (field, index) => {
   errors.value[field.key] = ''
 }
 
+// Check if form has been modified for edit mode
+const isFormModified = computed(() => {
+  if (!isEditMode.value) return true 
+  
+  // Compare current form with original
+  for (const field of props.config.fields) {
+    const currentValue = form.value[field.key]
+    const originalValue = originalForm.value[field.key]
+    
+    // Handle arrays (tags)
+    if (Array.isArray(currentValue)) {
+      if (JSON.stringify(currentValue) !== JSON.stringify(originalValue)) {
+        return true
+      }
+    } else if (currentValue !== originalValue) {
+      return true
+    }
+  }
+  
+  return false
+})
 
+// Form validation
 const isFormValid = computed(() => {
+  // Check all required fields are filled
   for (const field of props.config.fields) {
     const value = form.value[field.key]
     
@@ -266,18 +295,27 @@ const isFormValid = computed(() => {
       if (!value || (Array.isArray(value) && value.length === 0)) {
         return false
       }
+      // For text fields, check if not just whitespace
+      if ((field.type === 'text' || field.type === 'textarea') && typeof value === 'string') {
+        if (!value.trim()) {
+          return false
+        }
+      }
     }
     
+    // Check for validation errors
     if (errors.value[field.key]) {
       return false
     }
     
+    // Validate text length
     if ((field.type === 'text' || field.type === 'textarea') && value) {
       if (field.minLength && value.length < field.minLength) return false
       if (field.maxLength && value.length > field.maxLength) return false
     }
     
-    if (field.type === 'number' && value) {
+    // Validate number range
+    if (field.type === 'number') {
       const min = field.min
       const max = typeof field.max === 'function' ? field.max() : field.max
       if (min !== undefined && value < min) return false
@@ -288,13 +326,13 @@ const isFormValid = computed(() => {
   return true
 })
 
-
+// Get select options
 const getSelectOptions = (field) => {
   if (!field.options || !props.relatedStore) return []
   return field.options(props.relatedStore)
 }
 
-
+// Submit form
 const submitForm = async () => {
   const validations = await Promise.all(
     props.config.fields.map(field => validateField(field))
@@ -368,20 +406,12 @@ const submitForm = async () => {
 const cancel = () => {
   router.push(props.config.basePath)
 }
-
-const showToast = (message, type) => {
-  toast.value = { show: true, message, type }
-}
-
-const closeToast = () => {
-  toast.value.show = false
-}
 </script>
 
 <template>
   <div data-theme="papyrus" class="min-h-screen transition-colors duration-200">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
-      
+      <!-- Header -->
       <div class="mb-8">
         <button
           @click="cancel"
@@ -409,7 +439,7 @@ const closeToast = () => {
         </div>
       </div>
 
-      
+      <!-- Loading State -->
       <LoadingSpinner 
         v-if="loading"
         :message="`Loading ${config.entityName.toLowerCase()} data...`"
@@ -417,7 +447,7 @@ const closeToast = () => {
         size="lg"
       />
 
-      
+      <!-- Error State -->
       <EmptyState
         v-else-if="loadError"
         icon="fas fa-exclamation-triangle"
@@ -599,6 +629,7 @@ const closeToast = () => {
               <label class="label">
                 <span class="label-text font-bold">
                   <i :class="[field.icon, 'text-accent mr-2']"></i>{{ field.label }}
+                  <span v-if="field.required" class="text-error">*</span>
                 </span>
               </label>
               <input
@@ -609,8 +640,13 @@ const closeToast = () => {
                 :class="errors[field.key] ? 'input-error' : ''"
                 @blur="validateField(field)"
               />
-              <label v-if="errors[field.key]" class="label">
-                <span class="label-text-alt text-error">{{ errors[field.key] }}</span>
+              <label class="label">
+                <span v-if="errors[field.key]" class="label-text-alt text-error">
+                  {{ errors[field.key] }}
+                </span>
+                <span v-else class="label-text-alt text-base-content/60">
+                  Supported formats: .jpg, .jpeg, .png, .gif, .webp, .svg
+                </span>
               </label>
             </div>
           </div>
@@ -627,7 +663,7 @@ const closeToast = () => {
           </button>
           <button
             type="submit"
-            :disabled="!isFormValid || submitting"
+            :disabled="!isFormValid || !isFormModified || submitting"
             class="btn btn-primary"
           >
             <span v-if="submitting" class="loading loading-spinner loading-sm"></span>
@@ -637,14 +673,17 @@ const closeToast = () => {
           </button>
         </div>
 
-        
-        <div v-if="!isFormValid && !isEditMode" class="alert alert-warning mt-6">
+        <!-- Alerts -->
+        <div v-if="!isFormValid" class="alert alert-warning mt-6">
           <i class="fas fa-exclamation-triangle text-2xl"></i>
           <span>Please fill in all required fields marked with <span class="text-error">*</span></span>
         </div>
+        
+        <div v-if="isEditMode && isFormValid && !isFormModified" class="alert alert-info mt-6">
+          <i class="fas fa-info-circle text-2xl"></i>
+          <span>No changes made to update</span>
+        </div>
       </form>
-
-      <Toast :show="toast.show" :message="toast.message" :type="toast.type" @close="closeToast" />
     </div>
   </div>
 </template>

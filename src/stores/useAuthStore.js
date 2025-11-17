@@ -4,25 +4,26 @@ import { defineStore } from 'pinia'
 const USERS = [
   {
     email: 'abdelrahman@gmail.com',
-    password: 'Abdelrahman@123',
+    password: 'Abdelrahman@123',  
     name: 'Abdelrahman Ashraf'
   },
   {
     email: 'es.mostafa180@gmail.com',
-    password: 'es123456',
+    password: 'Esraa#456',  
     name: 'Esraa Mostafa'
   },
   {
     email: 'jehan@gmail.com',
-    password: 'Jehan123&',
+    password: 'Jehan123$',  
     name: 'Jehan Usama'
   },
-    {
-    email: 'Hassan@gmail.com',
-    password: 'Hassan@123',
+  {
+    email: 'hassan@gmail.com',
+    password: 'Hassan@99',  
     name: 'Hassan Ahmed'
   }
 ]
+
 
 
 export const useAuthStore = defineStore('auth', {

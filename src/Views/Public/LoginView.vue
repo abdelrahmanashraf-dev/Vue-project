@@ -187,20 +187,45 @@ const validateEmail = () => {
 
 const validatePassword = () => {
   const password = formData.value.password
-  
+
   if (!password) {
     passwordError.value = 'Password is required'
     return false
   }
-  
-  if (password.length < 6) {
-    passwordError.value = 'Password must be at least 6 characters'
+
+  if (password.length < 8) {
+    passwordError.value = 'Password must be at least 8 characters'
     return false
   }
+
   
+  if (!/[A-Z]/.test(password)) {
+    passwordError.value = 'Password must contain at least one uppercase letter'
+    return false
+  }
+
+  
+  if (!/[a-z]/.test(password)) {
+    passwordError.value = 'Password must contain at least one lowercase letter'
+    return false
+  }
+
+  
+  if (!/[0-9]/.test(password)) {
+    passwordError.value = 'Password must contain at least one number'
+    return false
+  }
+
+  
+  if (!/[@$!%*?&]/.test(password)) {
+    passwordError.value = 'Password must contain at least one special character (@$!%*?&)'
+    return false
+  }
+
   passwordError.value = ''
   return true
 }
+
 
 const isFormValid = computed(() => {
   return formData.value.email && 

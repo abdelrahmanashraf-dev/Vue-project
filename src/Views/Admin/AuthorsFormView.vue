@@ -23,6 +23,7 @@ const authorFormConfig = {
       key: 'bio',
       label: 'Biography',
       type: 'textarea',
+      required: true,
       maxLength: 800,
       rows: 5,
       icon: 'fas fa-file-alt'
@@ -31,6 +32,7 @@ const authorFormConfig = {
       key: 'avatarUrl',
       label: 'Avatar Image URL',
       type: 'url',
+      required: true,
       icon: 'fas fa-image'
     }
   ]

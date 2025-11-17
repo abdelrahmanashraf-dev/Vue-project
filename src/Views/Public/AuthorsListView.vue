@@ -1,132 +1,77 @@
 <template>
   <div class="p-6 md:p-8 bg-base-200 min-h-screen" dir="ltr">
-    
     <div class="max-w-6xl mx-auto card bg-base-100 shadow-xl">
       <div class="card-body">
-        
         <h2 class="card-title text-3xl">Author Management</h2>
         <div class="divider"></div>
 
-        <div class="flex flex-col md:flex-row gap-4 mb-6">
-          <div class="form-control flex-1">
-            <input 
-              v-model="searchQuery" 
-              type="text" 
-              placeholder="Search authors..." 
-              class="input input-bordered w-full"
-            />
-          </div>
-
-          <div class="form-control">
-            <button @click="clearSearch" class="btn btn-outline mt-auto">
-              Clear Search
-            </button>
-          </div>
-        </div>
-
-        <!-- Loading State -->
-        <LoadingSpinner 
-          v-if="loading"
-          message="Loading authors..."
-          subtext="Gathering information about our writers"
-          size="lg"
+        <!-- Search Filter -->
+        <SearchFilter
+          v-model:searchQuery="searchQuery"
+          search-placeholder="Search authors..."
+          clear-button-text="Clear Search"
+          @clear="clearSearch"
         />
 
-        <!-- Error State -->
-        <EmptyState
-          v-else-if="error"
-          icon="fas fa-exclamation-triangle"
-          icon-color="error"
-          title="Failed to Load Authors"
-          :description="error.message"
-          action-text="Retry"
-          action-icon="fas fa-redo"
-          action-button-class="btn-error"
-          :show-default-action="true"
-          @action="fetchAuthors"
-        />
-
-        <!-- Authors Table -->
-        <div v-else-if="filteredAuthors.length">
-          <div class="overflow-x-auto">
-            <table class="table w-full table-zebra">
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Bio / Description</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="author in paginatedAuthors" :key="author.id" class="hover">
-                  <td>
-                    <div class="avatar">
-                      <div class="mask mask-squircle w-12 h-12">
-                        <img :src="author.avatarUrl" :alt="author.name + ' photo'" />
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="font-bold">{{ author.name }}</div>
-                  </td>
-                  <td>
-                    <span class="text-sm text-base-content/70 line-clamp-2">
-                      {{ author.bio }}
-                    </span>
-                  </td>
-                  <td>
-                    <button 
-                      @click="goToAuthorDetails(author.id)" 
-                      class="btn btn-sm btn-primary px-4"
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div v-if="totalPages > 1" class="flex justify-center pt-6 gap-2">
-            <button @click="prevPage" :disabled="currentPage === 1" class="btn">«</button>
-            
-            <button 
-              v-for="page in displayedPages"
-              :key="page"
-              class="btn" 
-              :class="{ 'btn-active': page === currentPage }"
-              @click="goToPage(page)"
-            >
-              {{ page }}
-            </button>
-            
-            <button @click="nextPage" :disabled="currentPage === totalPages" class="btn">»</button>
-          </div>
-        </div>
-        
-        <!-- Empty State -->
-        <EmptyState
-          v-else
-          icon="fas fa-user-pen"
-          icon-color="secondary"
-          title="No Authors Found"
-          :description="searchQuery 
+        <!-- Data Table -->
+        <DataTable
+          :data="paginatedAuthors"
+          :columns="columns"
+          :loading="loading"
+          :error="error"
+          loading-message="Loading authors..."
+          loading-subtext="Gathering information about our writers"
+          empty-icon="fas fa-user-pen"
+          empty-icon-color="secondary"
+          empty-title="No Authors Found"
+          :empty-description="searchQuery 
             ? 'No authors match your search criteria. Try a different search term.' 
             : 'No authors have been added yet. Start building your author collection!'"
-          action-text="Clear Search"
-          action-icon="fas fa-times"
-          :show-default-action="!!searchQuery"
-          @action="clearSearch"
+          empty-action-text="Clear Search"
+          empty-action-icon="fas fa-times"
+          :show-empty-action="!!searchQuery"
+          @view-details="goToAuthorDetails"
+          @retry="fetchAuthors"
+          @empty-action="clearSearch"
         >
-          <template v-if="!searchQuery" #actions>
+          <!-- Avatar Column -->
+          <template #cell-avatar="{ item }">
+            <div class="avatar">
+              <div class="mask mask-squircle w-12 h-12">
+                <img :src="item.avatarUrl" :alt="item.name + ' photo'" />
+              </div>
+            </div>
+          </template>
+
+          <!-- Name Column -->
+          <template #cell-name="{ item }">
+            <div class="font-bold">{{ item.name }}</div>
+          </template>
+
+          <!-- Bio Column -->
+          <template #cell-bio="{ item }">
+            <span class="text-sm text-base-content/70 line-clamp-2">
+              {{ item.bio }}
+            </span>
+          </template>
+
+          <!-- Empty State Actions -->
+          <template v-if="!searchQuery" #empty-actions>
             <button class="btn btn-primary gap-2">
               <i class="fas fa-plus"></i>
               Add Your First Author
             </button>
           </template>
-        </EmptyState>
+        </DataTable>
 
+        <!-- Pagination -->
+        <Pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @prev="prevPage"
+          @next="nextPage"
+          @goto="goToPage"
+        />
       </div>
     </div>
   </div>
@@ -136,22 +81,26 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from '@/composables/useToast';
-import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue';
-import EmptyState from '@/components/Ui/EmptyState.vue';
+import DataTable from '@/components/DataTable.vue';
+import SearchFilter from '@/components/SearchFilter.vue';
+import Pagination from '@/components/Pagination.vue';
 import axios from 'axios';
 
 const router = useRouter();
 const { showToast } = useToast();
 
+// Table columns configuration
+const columns = [
+  { key: 'avatar', label: 'Image' },
+  { key: 'name', label: 'Name' },
+  { key: 'bio', label: 'Bio / Description' }
+];
+
 // State variables
 const authors = ref([]);
 const loading = ref(true);
 const error = ref(null);
-
-// Search
 const searchQuery = ref('');
-
-// Pagination state
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
 
@@ -164,7 +113,6 @@ async function fetchAuthors() {
     const response = await axios.get('http://localhost:3000/authors');
     authors.value = response.data;
     
-    // Show success toast
     if (authors.value.length > 0) {
       showToast(`Loaded ${authors.value.length} authors successfully`, 'success');
     }
@@ -189,7 +137,7 @@ const filteredAuthors = computed(() => {
   );
 });
 
-// Total pages based on filtered results
+// Total pages
 const totalPages = computed(() => {
   return Math.ceil(filteredAuthors.value.length / itemsPerPage.value);
 });
@@ -199,38 +147,6 @@ const paginatedAuthors = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage.value;
   const endIndex = startIndex + itemsPerPage.value;
   return filteredAuthors.value.slice(startIndex, endIndex);
-});
-
-// Display limited page numbers for pagination
-const displayedPages = computed(() => {
-  const pages = [];
-  const maxDisplayed = 5;
-  
-  if (totalPages.value <= maxDisplayed) {
-    for (let i = 1; i <= totalPages.value; i++) {
-      pages.push(i);
-    }
-  } else {
-    if (currentPage.value <= 3) {
-      for (let i = 1; i <= 4; i++) pages.push(i);
-      pages.push('...');
-      pages.push(totalPages.value);
-    } else if (currentPage.value >= totalPages.value - 2) {
-      pages.push(1);
-      pages.push('...');
-      for (let i = totalPages.value - 3; i <= totalPages.value; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      pages.push('...');
-      pages.push(currentPage.value - 1);
-      pages.push(currentPage.value);
-      pages.push(currentPage.value + 1);
-      pages.push('...');
-      pages.push(totalPages.value);
-    }
-  }
-  
-  return pages;
 });
 
 // Navigation functions
@@ -262,11 +178,10 @@ function clearSearch() {
   showToast('Search cleared', 'info');
 }
 
-
+// Watchers
 watch(searchQuery, () => {
   currentPage.value = 1;
 });
-
 
 watch(filteredAuthors, (newVal) => {
   if (!loading.value && newVal.length === 0 && searchQuery.value) {

@@ -1,151 +1,108 @@
 <template>
   <div class="p-6 md:p-8 bg-base-200 min-h-screen" dir="ltr" data-theme="papyrus">
-    
     <div class="max-w-6xl mx-auto card bg-base-100 shadow-xl">
       <div class="card-body">
-        
         <h2 class="card-title text-3xl">Book Management</h2>
         <div class="divider"></div>
 
-        <div class="flex flex-col md:flex-row gap-4 mb-6">
-          <div class="form-control flex-1">
-            <input 
-              v-model="searchQuery" 
-              type="text" 
-              placeholder="Search books..." 
-              class="input input-bordered w-full"
-            />
-          </div>
+        <!-- Search Filter with Author Dropdown -->
+        <SearchFilter
+          v-model:searchQuery="searchQuery"
+          search-placeholder="Search books..."
+          clear-button-text="Clear Filters"
+          @clear="clearFilters"
+        >
+          <template #filters>
+            <div class="form-control flex-1">
+              <select v-model="selectedAuthorId" class="select select-bordered w-full">
+                <option value="">All Authors</option>
+                <option v-for="author in authors" :key="author.id" :value="author.id">
+                  {{ author.name }}
+                </option>
+              </select>
+            </div>
+          </template>
+        </SearchFilter>
 
-          <div class="form-control flex-1">
-            <select v-model="selectedAuthorId" class="select select-bordered w-full">
-              <option value="">All Authors</option>
-              <option v-for="author in authors" :key="author.id" :value="author.id">
-                {{ author.name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-control">
-            <button @click="clearFilters" class="btn btn-outline mt-auto">
-              Clear Filters
-            </button>
-          </div>
-        </div>
-
-        <!-- Loading State -->
-        <LoadingSpinner 
-          v-if="loading"
-          message="Loading books..."
-          subtext="Fetching your library collection"
-          size="lg"
-        />
-
-        <!-- Error State -->
-        <EmptyState
-          v-else-if="error"
-          icon="fas fa-exclamation-triangle"
-          icon-color="error"
-          title="Failed to Load Books"
-          :description="error.message"
-          action-text="Retry"
-          action-icon="fas fa-redo"
-          action-button-class="btn-error"
-          :show-default-action="true"
-          @action="fetchBooks"
-        />
-
-        <!-- Books Table -->
-        <div v-else-if="filteredBooks.length">
-          <div class="overflow-x-auto">
-            <table class="table w-full table-zebra">
-              <thead>
-                <tr>
-                  <th>Cover</th>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Year</th>
-                  <th>Description</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="book in paginatedBooks" :key="book.id" class="hover">
-                  <td>
-                    <div class="avatar">
-                      <div class="mask mask-squircle w-12 h-12">
-                        <img :src="book.coverUrl" :alt="book.title + ' cover'" />
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="font-bold">{{ book.title }}</div>
-                  </td>
-                  <td>
-                    <span class="text-sm">
-                      {{ getAuthorName(book.authorId) }}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge badge-ghost">{{ book.year }}</span>
-                  </td>
-                  <td>
-                    <span class="text-sm text-base-content/70 line-clamp-2">
-                      {{ book.description }}
-                    </span>
-                  </td>
-                  <td>
-                    <button 
-                      @click="goToBookDetails(book.id)" 
-                      class="btn btn-sm btn-primary flex items-center justify-center gap-2"
-                    >
-                      <span class="whitespace-nowrap">View Details</span>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div v-if="totalPages > 1" class="flex justify-center pt-6 gap-2">
-            <button @click="prevPage" :disabled="currentPage === 1" class="btn">«</button>
-            
-            <button 
-              v-for="page in displayedPages"
-              :key="page"
-              class="btn" 
-              :class="{ 'btn-active': page === currentPage }"
-              @click="goToPage(page)"
-            >
-              {{ page }}
-            </button>
-            
-            <button @click="nextPage" :disabled="currentPage === totalPages" class="btn">»</button>
-          </div>
-        </div>
-        
-        <!-- Empty State -->
-        <EmptyState
-          v-else
-          icon="fas fa-book"
-          icon-color="primary"
-          title="No Books Found"
-          :description="searchQuery || selectedAuthorId 
+        <!-- Data Table -->
+        <DataTable
+          :data="paginatedBooks"
+          :columns="columns"
+          :loading="loading"
+          :error="error"
+          loading-message="Loading books..."
+          loading-subtext="Fetching your library collection"
+          empty-icon="fas fa-book"
+          empty-icon-color="primary"
+          empty-title="No Books Found"
+          :empty-description="searchQuery || selectedAuthorId 
             ? 'Try adjusting your filters to find what you\'re looking for' 
             : 'No books have been added yet. Start building your library!'"
-          action-text="Clear Filters"
-          action-icon="fas fa-filter-circle-xmark"
-          :show-default-action="!!(searchQuery || selectedAuthorId)"
-          @action="clearFilters"
+          empty-action-text="Clear Filters"
+          empty-action-icon="fas fa-filter-circle-xmark"
+          :show-empty-action="!!(searchQuery || selectedAuthorId)"
+          @view-details="goToBookDetails"
+          @retry="fetchBooks"
+          @empty-action="clearFilters"
         >
-          <template v-if="!searchQuery && !selectedAuthorId" #actions>
+          <!-- Cover Column -->
+          <template #cell-cover="{ item }">
+            <div class="avatar">
+              <div class="mask mask-squircle w-12 h-12">
+                <img :src="item.coverUrl" :alt="item.title + ' cover'" />
+              </div>
+            </div>
+          </template>
+
+          <!-- Title Column -->
+          <template #cell-title="{ item }">
+            <div class="font-bold">{{ item.title }}</div>
+          </template>
+
+          <!-- Author Column -->
+          <template #cell-author="{ item }">
+            <span class="text-sm">{{ getAuthorName(item.authorId) }}</span>
+          </template>
+
+          <!-- Year Column -->
+          <template #cell-year="{ item }">
+            <span class="badge badge-ghost">{{ item.year }}</span>
+          </template>
+
+          <!-- Description Column -->
+          <template #cell-description="{ item }">
+            <span class="text-sm text-base-content/70 line-clamp-2">
+              {{ item.description }}
+            </span>
+          </template>
+
+          <!-- Custom Actions -->
+          <template #actions="{ item }">
+            <button 
+              @click="goToBookDetails(item.id)" 
+              class="btn btn-sm btn-primary flex items-center justify-center gap-2"
+            >
+              <span class="whitespace-nowrap">View Details</span>
+            </button>
+          </template>
+
+          <!-- Empty State Actions -->
+          <template v-if="!searchQuery && !selectedAuthorId" #empty-actions>
             <button class="btn btn-primary gap-2">
               <i class="fas fa-plus"></i>
               Add Your First Book
             </button>
           </template>
-        </EmptyState>
+        </DataTable>
 
+        <!-- Pagination -->
+        <Pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @prev="prevPage"
+          @next="nextPage"
+          @goto="goToPage"
+        />
       </div>
     </div>
   </div>
@@ -155,34 +112,40 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useToast } from '@/composables/useToast';
-import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue';
-import EmptyState from '@/components/Ui/EmptyState.vue';
+import DataTable from '@/components/DataTable.vue';
+import SearchFilter from '@/components/SearchFilter.vue';
+import Pagination from '@/components/Pagination.vue';
 import axios from 'axios';
 
 const router = useRouter();
 const route = useRoute();
 const { showToast } = useToast();
 
+// Table columns configuration
+const columns = [
+  { key: 'cover', label: 'Cover' },
+  { key: 'title', label: 'Title' },
+  { key: 'author', label: 'Author' },
+  { key: 'year', label: 'Year' },
+  { key: 'description', label: 'Description' }
+];
+
 // State variables
 const books = ref([]);
 const authors = ref([]);
 const loading = ref(true);
 const error = ref(null);
-
-// Search and Filter
 const searchQuery = ref('');
 const selectedAuthorId = ref('');
-
-// Pagination state
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
 
-// Create a Map for faster author lookup
+// Author lookup map
 const authorMap = computed(() => {
   return new Map(authors.value.map(author => [Number(author.id), author.name]));
 });
 
-// Fetch authors for the filter dropdown
+// Fetch authors
 async function fetchAuthors() {
   try {
     const response = await axios.get('http://localhost:3000/authors');
@@ -214,12 +177,12 @@ async function fetchBooks() {
   }
 }
 
-// Get author name by ID (optimized with Map)
+// Get author name
 function getAuthorName(authorId) {
   return authorMap.value.get(Number(authorId)) || 'Unknown Author';
 }
 
-// Initialize search from URL query parameter
+// Initialize search from URL
 function initializeSearchFromQuery() {
   const queryParam = route.query.q;
   if (queryParam && typeof queryParam === 'string') {
@@ -228,11 +191,10 @@ function initializeSearchFromQuery() {
   }
 }
 
-// Filtered books based on search and author filter
+// Filtered books
 const filteredBooks = computed(() => {
   let result = books.value;
 
-  // Search by title
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase();
     result = result.filter(book => 
@@ -240,7 +202,6 @@ const filteredBooks = computed(() => {
     );
   }
 
-  // Filter by author
   if (selectedAuthorId.value) {
     result = result.filter(book => 
       Number(book.authorId) === Number(selectedAuthorId.value)
@@ -250,7 +211,7 @@ const filteredBooks = computed(() => {
   return result;
 });
 
-// Total pages based on filtered results
+// Total pages
 const totalPages = computed(() => {
   return Math.ceil(filteredBooks.value.length / itemsPerPage.value);
 });
@@ -260,38 +221,6 @@ const paginatedBooks = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage.value;
   const endIndex = startIndex + itemsPerPage.value;
   return filteredBooks.value.slice(startIndex, endIndex);
-});
-
-// Display limited page numbers for pagination
-const displayedPages = computed(() => {
-  const pages = [];
-  const maxDisplayed = 5;
-  
-  if (totalPages.value <= maxDisplayed) {
-    for (let i = 1; i <= totalPages.value; i++) {
-      pages.push(i);
-    }
-  } else {
-    if (currentPage.value <= 3) {
-      for (let i = 1; i <= 4; i++) pages.push(i);
-      pages.push('...');
-      pages.push(totalPages.value);
-    } else if (currentPage.value >= totalPages.value - 2) {
-      pages.push(1);
-      pages.push('...');
-      for (let i = totalPages.value - 3; i <= totalPages.value; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      pages.push('...');
-      pages.push(currentPage.value - 1);
-      pages.push(currentPage.value);
-      pages.push(currentPage.value + 1);
-      pages.push('...');
-      pages.push(totalPages.value);
-    }
-  }
-  
-  return pages;
 });
 
 // Navigation functions
@@ -321,19 +250,15 @@ function clearFilters() {
   searchQuery.value = '';
   selectedAuthorId.value = '';
   currentPage.value = 1;
-  
-  // Clear query parameter from URL
   router.replace({ query: {} });
-  
   showToast('Filters cleared', 'info');
 }
 
-// Reset to page 1 when filters change
+// Watchers
 watch([searchQuery, selectedAuthorId], () => {
   currentPage.value = 1;
 });
 
-// Show toast when no results found
 watch(filteredBooks, (newVal) => {
   if (!loading.value && newVal.length === 0 && (searchQuery.value || selectedAuthorId.value)) {
     showToast('No books found matching your criteria', 'info');
@@ -341,10 +266,7 @@ watch(filteredBooks, (newVal) => {
 });
 
 onMounted(async () => {
-  // Initialize search from URL first
   initializeSearchFromQuery();
-  
-  // Then fetch data
   await fetchAuthors();
   await fetchBooks();
 });
