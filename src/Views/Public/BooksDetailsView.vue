@@ -89,7 +89,7 @@ watch(() => route.params.id, fetchData)
      :class="isDark ? 'bg-base-100 text-base-content' : 'bg-base-100 text-base-content'"
      class="min-h-screen font-sans">
 
-  <!-- Loading State -->
+  
   <LoadingSpinner 
     v-if="loading"
     message="Loading book details..."
@@ -98,7 +98,7 @@ watch(() => route.params.id, fetchData)
     container-class="min-h-screen"
   />
 
-  <!-- Error/Not Found State -->
+  
   <EmptyState
     v-else-if="error"
     :icon="error === 'Book not found' ? 'fas fa-book-dead' : 'fas fa-exclamation-triangle'"
@@ -191,7 +191,7 @@ watch(() => route.params.id, fetchData)
     </div>
   </section>
 
-  <!-- Empty Related Books State -->
+  
   <section v-if="!loading && !error && relatedBooks.length === 0" class="container mx-auto px-6 py-12">
     <EmptyState
       icon="fas fa-books"

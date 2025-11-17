@@ -307,7 +307,7 @@ onMounted(fetchDashboardData)
     </div>
   </div>
 
-  <!-- Loading State -->
+  
   <LoadingSpinner 
     v-if="loading"
     message="Loading dashboard..."
@@ -315,7 +315,7 @@ onMounted(fetchDashboardData)
     size="lg"
   />
 
-  <!-- Error State -->
+  
   <EmptyState
     v-else-if="error"
     icon="fas fa-exclamation-circle"
@@ -454,7 +454,7 @@ onMounted(fetchDashboardData)
           </router-link>
         </div>
 
-        <!-- Empty State for no books -->
+        
         <EmptyState
           v-if="latestBooks.length === 0"
           icon="fas fa-book-open"
@@ -469,7 +469,7 @@ onMounted(fetchDashboardData)
           size="sm"
         />
 
-        <!-- Books Table -->
+        
         <div v-else class="overflow-x-auto">
           <table class="table table-zebra w-full">
             <thead>

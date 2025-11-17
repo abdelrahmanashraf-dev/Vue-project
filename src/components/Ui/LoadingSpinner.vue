@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-col items-center justify-center py-12" :class="containerClass">
     <div class="relative">
-      <!-- Spinner with decorative elements -->
       <div class="absolute inset-0 flex items-center justify-center">
         <div class="w-20 h-20 border-4 border-primary/20 rounded-full"></div>
       </div>
@@ -14,7 +13,6 @@
         ]"
       ></span>
       
-      <!-- Egyptian-style decorative dots -->
       <div class="absolute inset-0 flex items-center justify-center animate-pulse">
         <div class="w-24 h-24 flex items-center justify-center">
           <i class="fas fa-book-open text-primary/30 text-2xl"></i>
@@ -22,7 +20,6 @@
       </div>
     </div>
 
-    <!-- Loading text -->
     <p 
       v-if="message" 
       class="mt-6 text-base font-medium animate-pulse"
@@ -31,7 +28,6 @@
       {{ message }}
     </p>
 
-    <!-- Additional subtext -->
     <p 
       v-if="subtext" 
       class="mt-2 text-sm opacity-70"

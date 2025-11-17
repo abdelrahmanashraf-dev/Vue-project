@@ -254,7 +254,7 @@ function handleLogout() {
   @apply bg-primary bg-opacity-10 font-semibold;
 }
 
-/* Slide fade transition */
+
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }

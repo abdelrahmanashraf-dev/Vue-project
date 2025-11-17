@@ -42,7 +42,6 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
       this.error = null
 
-
       try {
 
         await new Promise(resolve => setTimeout(resolve, 800))

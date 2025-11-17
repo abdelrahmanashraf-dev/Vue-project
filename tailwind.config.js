@@ -30,8 +30,8 @@ export default {
           "accent-content": "#ffffff",
           "neutral": "#3d4451",
           "neutral-content": "#ffffff",
-          "base-100": "#f8f5f0",         // الكريمي
-          "base-200": "#f0ece4",         // البيج
+          "base-100": "#f8f5f0",        
+          "base-200": "#f0ece4",        
           "base-300": "#e8e0d4",
           "base-content": "#3a3a3a",
           "info": "#3abff8",

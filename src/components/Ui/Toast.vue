@@ -6,7 +6,7 @@ const props = defineProps({
   message: String,
   type: {
     type: String,
-    default: 'success', // success, error, warning, info
+    default: 'success', 
     validator: (val) => ['success', 'error', 'warning', 'info'].includes(val)
   },
   duration: {

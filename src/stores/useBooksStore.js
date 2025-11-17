@@ -42,22 +42,20 @@ export const useBooksStore = defineStore('books', {
       this.loading = true
       this.error = null
       try {
-        // 🎯 احسب أكبر ID (convert to number)
         const maxId = this.books.length > 0 
           ? Math.max(...this.books.map(b => parseInt(b.id))) 
           : 0
         
-        // ✅ أزل أي id موجود وحط الـ id الجديد كـ string
         const { id, ...bookData } = newBook
         const bookWithId = {
           ...bookData,
-          id: String(maxId + 1)  // 👈 Convert to string
+          id: String(maxId + 1)  
         }
         
         const res = await axios.post(BASE_URL, bookWithId)
         this.books.push(res.data)
         
-        console.log('✅ New book ID:', res.data.id)
+        console.log(' New book ID:', res.data.id)
       } catch (err) {
         this.error = err.message
         throw err
@@ -71,7 +69,7 @@ export const useBooksStore = defineStore('books', {
       this.error = null
       try {
         const res = await axios.put(`${BASE_URL}/${id}`, updatedData)
-        const index = this.books.findIndex(b => b.id == id) // 👈 استخدم == بدل ===
+        const index = this.books.findIndex(b => b.id == id) 
         if (index !== -1) this.books[index] = res.data
       } catch (err) {
         this.error = err.message
@@ -85,7 +83,7 @@ export const useBooksStore = defineStore('books', {
       this.error = null
       try {
         await axios.delete(`${BASE_URL}/${id}`)
-        this.books = this.books.filter(b => b.id != id) // 👈 استخدم != بدل !==
+        this.books = this.books.filter(b => b.id != id) 
       } catch (err) {
         this.error = err.message
       } finally {

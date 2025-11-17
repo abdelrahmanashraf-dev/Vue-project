@@ -3,35 +3,30 @@
     class="flex flex-col items-center justify-center text-center px-6"
     :class="[containerClass, paddingClass]"
   >
-    <!-- Icon Container with Egyptian theme -->
     <div 
       class="relative mb-6 flex items-center justify-center"
       :class="iconSizeClass"
     >
-      <!-- Background decoration -->
+      
       <div 
         class="absolute inset-0 rounded-full opacity-10"
         :class="bgColorClass"
       ></div>
       
-      <!-- Outer ring -->
       <div 
         class="absolute inset-0 rounded-full border-4 opacity-20"
         :class="borderColorClass"
       ></div>
       
-      <!-- Icon -->
       <i 
         :class="[icon, iconColorClass, iconTextSizeClass]"
         class="relative z-10"
       ></i>
       
-      <!-- Small decorative dots (Egyptian style) -->
       <div class="absolute -top-2 -right-2 w-4 h-4 rounded-full opacity-30" :class="bgColorClass"></div>
       <div class="absolute -bottom-2 -left-2 w-3 h-3 rounded-full opacity-30" :class="bgColorClass"></div>
     </div>
 
-    <!-- Title -->
     <h3 
       class="font-bold mb-3"
       :class="[titleSizeClass, 'text-base-content']"
@@ -39,14 +34,12 @@
       {{ title }}
     </h3>
 
-    <!-- Description -->
     <p 
       class="text-base-content/70 mb-6"
       :class="descriptionSizeClass"
       v-html="description"
     ></p>
 
-    <!-- Action Buttons Slot -->
     <div v-if="$slots.actions || showDefaultAction" class="flex flex-wrap gap-3 justify-center">
       <slot name="actions">
         <button 
@@ -61,7 +54,6 @@
       </slot>
     </div>
 
-    <!-- Additional content slot -->
     <div v-if="$slots.default" class="mt-6 w-full">
       <slot></slot>
     </div>

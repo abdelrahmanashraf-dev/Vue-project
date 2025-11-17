@@ -59,24 +59,24 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <!-- Overlay for mobile -->
+  
   <div
     v-if="isOpen"
     class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-opacity"
     @click="closeSidebar"
   ></div>
 
-  <!-- Sidebar with papyrus theme colors -->
+  
   <aside
     class="fixed md:sticky top-0 left-0 z-50 bg-base-100 border-r border-base-300 w-64 h-screen overflow-y-auto transform transition-transform duration-300 ease-in-out"
     :class="isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
   >
-    <!-- Header -->
+    
     <div class="p-6 border-b border-base-300">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10  rounded-lg flex items-center justify-center shadow-md">
-                     <img src="/images/logo2.svg" alt="" class="h-12 w-auto brightness-0 saturate-100" style="filter: invert(61%) sepia(85%) saturate(466%) hue-rotate(6deg) brightness(92%) contrast(89%);"> 
+                    <img src="/images/logo2.svg" alt="" class="h-12 w-auto brightness-0 saturate-100" style="filter: invert(61%) sepia(85%) saturate(466%) hue-rotate(6deg) brightness(92%) contrast(89%);"> 
           </div>
           <div>
             <h2 class="text-lg font-bold text-base-content">Admin Dashboard</h2>
@@ -84,7 +84,7 @@ const handleLogout = () => {
           </div>
         </div>
         
-        <!-- Close button for mobile -->
+        
         <button
           @click="closeSidebar"
           class="md:hidden p-2 text-base-content/60 hover:text-base-content rounded-lg hover:bg-base-200 transition-all"
@@ -115,7 +115,7 @@ const handleLogout = () => {
             ></i>
             <span class="font-semibold">{{ item.label }}</span>
             
-            <!-- Active indicator -->
+            
             <span
               v-if="isActive(item)"
               class="ml-auto w-2 h-2 bg-primary-content rounded-full animate-pulse"
@@ -124,7 +124,7 @@ const handleLogout = () => {
         </li>
       </ul>
 
-      <!-- Divider -->
+      
       <div class="divider my-4"></div>
 
       <!-- Public Site Link -->
@@ -159,7 +159,7 @@ const handleLogout = () => {
         </div>
       </div>
 
-      <!-- Logout Button -->
+      
       <button
         @click="handleLogout"
         class="btn btn-error btn-outline btn-sm w-full gap-2"

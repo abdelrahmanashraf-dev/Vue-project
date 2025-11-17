@@ -70,7 +70,7 @@
     </section>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16">
-      <!-- Loading State -->
+      
       <LoadingSpinner 
         v-if="loading"
         message="Loading books..."
@@ -78,7 +78,7 @@
         size="lg"
       />
 
-      <!-- Error State -->
+      
       <EmptyState
         v-else-if="error"
         icon="fas fa-exclamation-circle"
@@ -104,7 +104,7 @@
           </a>
         </div>
 
-        <!-- Empty State for no books -->
+        
         <EmptyState
           v-if="books.length === 0"
           icon="fas fa-book-open"

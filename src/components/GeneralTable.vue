@@ -22,14 +22,14 @@ const props = defineProps({
 
 const router = useRouter()
 
-// State
+
 const searchQuery = ref('')
 const selectedFilter = ref('')
 const showDeleteModal = ref(false)
 const itemToDelete = ref(null)
 const viewMode = ref('grid')
 
-// Toast state
+
 const toast = ref({
   show: false,
   message: '',
@@ -43,7 +43,7 @@ onMounted(async () => {
   await props.store.fetchAuthors?.() || await props.store.fetchBooks?.()
 })
 
-// Get items from store
+
 const items = computed(() => {
   return props.store.books || props.store.authors || []
 })
@@ -131,7 +131,7 @@ const clearFilters = () => {
   selectedFilter.value = ''
 }
 
-// Get display name for the item
+
 const getItemDisplayName = (item) => {
   return item[props.config.searchField] || item.title || item.name || 'Item'
 }
@@ -140,7 +140,7 @@ const getItemDisplayName = (item) => {
 <template>
   <div data-theme="papyrus" class="min-h-screen transition-colors duration-200">
     <div class="container mx-auto px-4 py-8">
-      <!-- Header -->
+      
       <div class="mb-8">
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent p-8 shadow-xl">
           <div class="relative z-10">
@@ -156,10 +156,10 @@ const getItemDisplayName = (item) => {
         </div>
       </div>
 
-      <!-- Filters & Actions -->
+      
       <div class="bg-base-100 rounded-2xl shadow-lg p-6 mb-6 border border-base-300 transition-colors duration-200">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          <!-- Search -->
+          
           <div :class="config.filterField ? 'lg:col-span-2' : 'lg:col-span-3'">
             <label class="block text-sm font-semibold text-base-content mb-2">
               <i class="fas fa-search text-primary mr-2"></i>Search by {{ config.searchField }}
@@ -174,7 +174,7 @@ const getItemDisplayName = (item) => {
             </div>
           </div>
 
-          <!-- Filter (if configured) -->
+          
           <div v-if="config.filterField && filterOptions.length > 0">
             <label class="block text-sm font-semibold text-base-content mb-2">
               <i class="fas fa-filter text-secondary mr-2"></i>Filter by {{ config.filterLabel }}
@@ -194,7 +194,7 @@ const getItemDisplayName = (item) => {
             </select>
           </div>
 
-          <!-- Create Button -->
+          
           <div class="flex items-end">
             <button
               @click="goToCreate"
@@ -206,7 +206,7 @@ const getItemDisplayName = (item) => {
           </div>
         </div>
 
-        <!-- View Toggle -->
+        
         <div class="mt-4 pt-4 border-t border-base-300 flex items-center justify-end">
           <div class="btn-group">
             <button
@@ -225,14 +225,14 @@ const getItemDisplayName = (item) => {
         </div>
       </div>
 
-      <!-- Loading State -->
+      
       <LoadingSpinner 
         v-if="store.loading"
         :message="`Loading ${config.entityNamePlural.toLowerCase()}...`"
         size="lg"
       />
 
-      <!-- Empty State -->
+      
       <EmptyState
         v-else-if="filteredItems.length === 0"
         :icon="config.icon || 'fas fa-folder-open'"
@@ -255,7 +255,7 @@ const getItemDisplayName = (item) => {
           class="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 border border-base-300 transform hover:-translate-y-1"
         >
           <slot name="grid-card" :item="item" :goToEdit="goToEdit" :confirmDelete="confirmDelete">
-            <!-- Image/Cover Section -->
+            
             <div v-if="item.coverUrl || item.avatarUrl" class="relative h-48 overflow-hidden bg-gradient-to-br from-base-200 to-base-300">
               <img
                 :src="item.coverUrl || item.avatarUrl"
@@ -280,13 +280,13 @@ const getItemDisplayName = (item) => {
               </div>
             </div>
 
-            <!-- Content Section -->
+            
             <div class="card-body">
               <h3 class="card-title text-base-content">
                 {{ getItemDisplayName(item) }}
               </h3>
 
-              <!-- Render columns -->
+              
               <div class="space-y-2">
                 <div v-for="column in config.columns.slice(1)" :key="column.key" class="text-sm">
                   <span class="text-base-content/60">{{ column.label }}:</span>
@@ -328,7 +328,7 @@ const getItemDisplayName = (item) => {
         >
           <slot name="list-row" :item="item" :goToEdit="goToEdit" :confirmDelete="confirmDelete">
             <div class="flex gap-6 p-6">
-              <!-- Image/Avatar -->
+              
               <div v-if="item.coverUrl || item.avatarUrl" class="flex-shrink-0">
                 <img
                   :src="item.coverUrl || item.avatarUrl"

@@ -1,7 +1,7 @@
 <template>
   <div data-theme="papyrus" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent p-4">
     
-    <!-- Loading State (عند التحقق من الجلسة الحالية) -->
+    
     <div v-if="checkingAuth" class="card w-full max-w-md bg-base-100 shadow-2xl">
       <div class="card-body">
         <LoadingSpinner 
@@ -87,7 +87,7 @@
             </label>
           </div>
 
-          <!-- Remember Me -->
+          
           <div class="form-control">
             <label class="label cursor-pointer justify-start gap-3">
               <input 
@@ -111,7 +111,7 @@
           </button>
         </form>
 
-        <!-- Back to Home -->
+        
         <div class="text-center mt-6">
           <router-link 
             to="/" 
@@ -251,12 +251,11 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-/* Add smooth transitions */
+
 .link {
   transition: gap 0.2s ease;
 }
 
-/* Pulse animation for loading spinner */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;

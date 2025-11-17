@@ -1,4 +1,3 @@
-// composables/useToast.js
 import { ref } from 'vue'
 
 const toastState = ref({

@@ -262,12 +262,12 @@ function clearSearch() {
   showToast('Search cleared', 'info');
 }
 
-// Reset to page 1 when search changes
+
 watch(searchQuery, () => {
   currentPage.value = 1;
 });
 
-// Show toast when no results found
+
 watch(filteredAuthors, (newVal) => {
   if (!loading.value && newVal.length === 0 && searchQuery.value) {
     showToast('No authors found matching your criteria', 'info');

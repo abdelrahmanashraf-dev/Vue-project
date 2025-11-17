@@ -96,7 +96,7 @@ watch(() => route.params.id, (newId) => fetchData(newId))
 <template>
 <div :key="route.fullPath" class="min-h-screen font-sans" :class="isDark ? 'bg-base-100 text-base-content' : 'bg-base-100 text-base-content'">
 
-  <!-- Loading -->
+  
   <LoadingSpinner 
     v-if="loading"
     message="Loading author details..."
@@ -105,7 +105,7 @@ watch(() => route.params.id, (newId) => fetchData(newId))
     container-class="min-h-screen"
   />
 
-  <!-- Error/Not Found State -->
+  
   <EmptyState
     v-else-if="error"
     :icon="error === 'Author not found' ? 'fas fa-user-slash' : 'fas fa-exclamation-triangle'"

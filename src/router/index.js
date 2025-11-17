@@ -66,7 +66,7 @@ const routes = [
     ]
   },
 
-  // Login Route (No Layout)
+  // Login Route 
   {
     path: '/login',
     name: 'login',
@@ -74,7 +74,7 @@ const routes = [
     meta: { title: 'Login', requiresGuest: true }
   },
 
-  // Admin Routes (Protected)
+  // Admin Routes 
   {
     path: '/admin',
     component: AdminLayout,
@@ -151,7 +151,7 @@ router.beforeEach((to, from, next) => {
       next()
     }
   }
-  // Check if route requires guest (already logged in)
+  // Check if route requires guest 
   else if (to.meta.requiresGuest) {
     if (authStore.isAuthenticated) {
       // Redirect to admin dashboard if already logged in

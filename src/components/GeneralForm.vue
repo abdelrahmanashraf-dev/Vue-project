@@ -29,7 +29,7 @@ const pageTitle = computed(() =>
   isEditMode.value ? `Edit ${props.config.entityName}` : `Add New ${props.config.entityName}`
 )
 
-// Initialize form with default values
+
 const initForm = () => {
   const formData = {}
   props.config.fields.forEach(field => {
@@ -62,12 +62,12 @@ onMounted(async () => {
   loadError.value = null
   
   try {
-    // Fetch related data if needed
+    
     if (props.relatedStore) {
       await props.relatedStore.fetchAuthors?.() || await props.relatedStore.fetchBooks?.()
     }
 
-    // Load item data in edit mode
+    
     if (isEditMode.value) {
       await loadItem()
     }
@@ -124,7 +124,7 @@ const retryLoad = async () => {
   }
 }
 
-// Validation
+
 const validateField = async (field) => {
   const value = form.value[field.key]
   
@@ -213,14 +213,14 @@ const validateField = async (field) => {
   return true
 }
 
-// Watch all fields
+
 props.config.fields.forEach(field => {
   if (field.type !== 'tags') {
     watch(() => form.value[field.key], () => validateField(field))
   }
 })
 
-// Tags management
+
 const addTag = (field) => {
   const tag = tagInput.value.trim()
   if (!tag) return
@@ -257,7 +257,7 @@ const removeTag = (field, index) => {
   errors.value[field.key] = ''
 }
 
-// Form validity
+
 const isFormValid = computed(() => {
   for (const field of props.config.fields) {
     const value = form.value[field.key]
@@ -288,13 +288,13 @@ const isFormValid = computed(() => {
   return true
 })
 
-// Get select options
+
 const getSelectOptions = (field) => {
   if (!field.options || !props.relatedStore) return []
   return field.options(props.relatedStore)
 }
 
-// Submit
+
 const submitForm = async () => {
   const validations = await Promise.all(
     props.config.fields.map(field => validateField(field))
@@ -381,7 +381,7 @@ const closeToast = () => {
 <template>
   <div data-theme="papyrus" class="min-h-screen transition-colors duration-200">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
-      <!-- Header -->
+      
       <div class="mb-8">
         <button
           @click="cancel"
@@ -409,7 +409,7 @@ const closeToast = () => {
         </div>
       </div>
 
-      <!-- Loading State -->
+      
       <LoadingSpinner 
         v-if="loading"
         :message="`Loading ${config.entityName.toLowerCase()} data...`"
@@ -417,7 +417,7 @@ const closeToast = () => {
         size="lg"
       />
 
-      <!-- Load Error State -->
+      
       <EmptyState
         v-else-if="loadError"
         icon="fas fa-exclamation-triangle"
@@ -637,7 +637,7 @@ const closeToast = () => {
           </button>
         </div>
 
-        <!-- Validation Warning -->
+        
         <div v-if="!isFormValid && !isEditMode" class="alert alert-warning mt-6">
           <i class="fas fa-exclamation-triangle text-2xl"></i>
           <span>Please fill in all required fields marked with <span class="text-error">*</span></span>

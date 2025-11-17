@@ -18,7 +18,7 @@ const closeSidebar = () => {
 
 <template>
    <div data-theme="papyrus" class="flex min-h-screen">
-    <!-- Sidebar -->
+    
     <AdminSidebar :is-open="isSidebarOpen" @close="closeSidebar" />
 
     <!-- Main Content Area -->
@@ -36,8 +36,10 @@ const closeSidebar = () => {
           </button>
           
           <div class="flex items-center gap-2">
-            <span class="text-xl">📚</span>
-            <span class="font-bold text-base-content">Admin Panel</span>
+            <div class="w-10 h-10  rounded-lg flex items-center justify-center shadow-md">
+                     <img src="/images/logo2.svg" alt="" class="h-12 w-auto brightness-0 saturate-100" style="filter: invert(61%) sepia(85%) saturate(466%) hue-rotate(6deg) brightness(92%) contrast(89%);"> 
+          </div>
+            <span class="font-bold text-base-content">Admin Dasboard</span>
           </div>
           
           <div class="w-10"></div>
