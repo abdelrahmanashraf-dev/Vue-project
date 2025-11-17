@@ -6,8 +6,8 @@
           to="/"
           class="btn btn-ghost normal-case text-xl flex items-center gap-2 hover:bg-base-200"
         >
-          <i class="fas fa-book text-primary text-2xl"></i>
-          <span class="font-semibold hidden sm:inline">Books & Authors</span>
+          <img src="/public/images/logo2.svg" alt="" class="h-12 w-auto brightness-0 saturate-100 -mt-0.5" style="filter: invert(61%) sepia(85%) saturate(466%) hue-rotate(6deg) brightness(92%) contrast(89%);">
+          <span class="font-semibold hidden sm:inline">House of Papyrus</span>
         </router-link>
 
         <div class="hidden md:flex flex-1 justify-center max-w-md">
