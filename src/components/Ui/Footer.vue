@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
       <div>
         <router-link to="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-         <img src="/public/images/logo2.svg" alt="" class="h-12 w-auto brightness-0 saturate-100" style="filter: invert(61%) sepia(85%) saturate(466%) hue-rotate(6deg) brightness(92%) contrast(89%);"> 
+         <img src="/images/logo2.svg" alt="" class="h-12 w-auto brightness-0 saturate-100" style="filter: invert(61%) sepia(85%) saturate(466%) hue-rotate(6deg) brightness(92%) contrast(89%);"> 
           <span class="font-semibold text-lg">House of Papyrus</span>
         </router-link>
         <p class="text-sm opacity-70 mt-3 max-w-sm">

@@ -75,12 +75,12 @@ const handleLogout = () => {
     <div class="p-6 border-b border-base-300">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
-            <i class="fas fa-book text-primary-content text-xl"></i>
+          <div class="w-10 h-10  rounded-lg flex items-center justify-center shadow-md">
+                     <img src="/images/logo2.svg" alt="" class="h-12 w-auto brightness-0 saturate-100" style="filter: invert(61%) sepia(85%) saturate(466%) hue-rotate(6deg) brightness(92%) contrast(89%);"> 
           </div>
           <div>
-            <h2 class="text-lg font-bold text-base-content">Admin Panel</h2>
-            <p class="text-xs text-base-content/70">Books & Authors</p>
+            <h2 class="text-lg font-bold text-base-content">Admin Dashboard</h2>
+            <p class="text-xs text-base-content/70">House of Papyrus</p>
           </div>
         </div>
         
