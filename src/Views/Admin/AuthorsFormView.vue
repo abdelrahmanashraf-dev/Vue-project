@@ -7,7 +7,7 @@ const authorsStore = useAuthorsStore()
 const authorFormConfig = {
   entityName: 'Author',
   entityNamePlural: 'Authors',
-  icon: '✍️',
+  icon: 'fas fa-pen-fancy',
   basePath: '/admin/authors',
   fields: [
     {
@@ -17,7 +17,7 @@ const authorFormConfig = {
       required: true,
       minLength: 2,
       maxLength: 60,
-      icon: '👤'
+      icon: 'fas fa-user'
     },
     {
       key: 'bio',
@@ -25,13 +25,13 @@ const authorFormConfig = {
       type: 'textarea',
       maxLength: 800,
       rows: 5,
-      icon: '📝'
+      icon: 'fas fa-file-alt'
     },
     {
       key: 'avatarUrl',
       label: 'Avatar Image URL',
       type: 'url',
-      icon: '🖼️'
+      icon: 'fas fa-image'
     }
   ]
 }

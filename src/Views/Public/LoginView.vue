@@ -1,23 +1,33 @@
 <template>
   <div data-theme="papyrus" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent p-4">
-    <div class="card w-full max-w-md bg-base-100 shadow-2xl">
+    
+    <!-- Loading State (عند التحقق من الجلسة الحالية) -->
+    <div v-if="checkingAuth" class="card w-full max-w-md bg-base-100 shadow-2xl">
+      <div class="card-body">
+        <LoadingSpinner 
+          message="Checking authentication..."
+          subtext="Please wait"
+          size="md"
+          color="primary"
+        />
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <div v-else class="card w-full max-w-md bg-base-100 shadow-2xl">
       <div class="card-body">
         <!-- Header -->
         <div class="text-center mb-6">
-          <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary-content" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
-            </svg>
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl mb-4 shadow-lg">
+            <i class="fas fa-shield-alt text-3xl text-primary-content"></i>
           </div>
           <h2 class="text-3xl font-bold text-base-content">Admin Login</h2>
           <p class="text-base-content/60 mt-2">Books & Authors Management</p>
         </div>
 
         <!-- Error Alert -->
-        <div v-if="error" class="alert alert-error mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+        <div v-if="error" class="alert alert-error mb-4 shadow-md">
+          <i class="fas fa-exclamation-circle text-xl"></i>
           <span>{{ error }}</span>
         </div>
 
@@ -25,49 +35,90 @@
         <form @submit.prevent="handleLogin" class="space-y-4">
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-semibold">Email</span>
+              <span class="label-text font-semibold">
+                <i class="fas fa-envelope text-primary mr-2"></i>Email
+              </span>
             </label>
             <input
               type="email"
               v-model="formData.email"
               placeholder="admin@example.com"
               class="input input-bordered w-full"
+              :class="{ 'input-error': emailError }"
               required
               :disabled="loading"
+              @blur="validateEmail"
+              @input="emailError = ''"
             />
+            <label v-if="emailError" class="label">
+              <span class="label-text-alt text-error">{{ emailError }}</span>
+            </label>
           </div>
 
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-semibold">Password</span>
+              <span class="label-text font-semibold">
+                <i class="fas fa-lock text-secondary mr-2"></i>Password
+              </span>
             </label>
-            <input
-              type="password"
-              v-model="formData.password"
-              placeholder="••••••••"
-              class="input input-bordered w-full"
-              required
-              :disabled="loading"
-            />
+            <div class="relative">
+              <input
+                :type="showPassword ? 'text' : 'password'"
+                v-model="formData.password"
+                placeholder="••••••••"
+                class="input input-bordered w-full pr-12"
+                :class="{ 'input-error': passwordError }"
+                required
+                :disabled="loading"
+                @blur="validatePassword"
+                @input="passwordError = ''"
+              />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content"
+                :disabled="loading"
+              >
+                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+            <label v-if="passwordError" class="label">
+              <span class="label-text-alt text-error">{{ passwordError }}</span>
+            </label>
+          </div>
+
+          <!-- Remember Me -->
+          <div class="form-control">
+            <label class="label cursor-pointer justify-start gap-3">
+              <input 
+                type="checkbox" 
+                v-model="rememberMe" 
+                class="checkbox checkbox-primary checkbox-sm"
+                :disabled="loading"
+              />
+              <span class="label-text">Remember me</span>
+            </label>
           </div>
 
           <button
             type="submit"
-            class="btn btn-primary w-full"
-            :disabled="loading"
+            class="btn btn-primary w-full shadow-md"
+            :disabled="loading || !isFormValid"
           >
             <span v-if="loading" class="loading loading-spinner loading-sm"></span>
+            <i v-else class="fas fa-sign-in-alt mr-2"></i>
             {{ loading ? 'Logging in...' : 'Login' }}
           </button>
         </form>
 
         <!-- Back to Home -->
-        <div class="text-center mt-4">
-          <router-link to="/" class="link link-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Home
+        <div class="text-center mt-6">
+          <router-link 
+            to="/" 
+            class="link link-primary inline-flex items-center gap-2 hover:gap-3 transition-all"
+          >
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Home</span>
           </router-link>
         </div>
       </div>
@@ -76,10 +127,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useToast } from '@/composables/useToast'
+import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -92,27 +144,129 @@ const formData = ref({
 })
 
 const loading = ref(false)
+const checkingAuth = ref(true)
 const error = ref(null)
+const emailError = ref('')
+const passwordError = ref('')
+const showPassword = ref(false)
+const rememberMe = ref(false)
+
+// Check if user is already logged in
+onMounted(async () => {
+  checkingAuth.value = true
+  
+  // Simulate checking authentication
+  await new Promise(resolve => setTimeout(resolve, 500))
+  
+  if (authStore.isAuthenticated) {
+    showToast('Already logged in. Redirecting...', 'info')
+    router.push('/admin')
+  }
+  
+  checkingAuth.value = false
+})
+
+// Validation
+const validateEmail = () => {
+  const email = formData.value.email.trim()
+  
+  if (!email) {
+    emailError.value = 'Email is required'
+    return false
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email)) {
+    emailError.value = 'Please enter a valid email address'
+    return false
+  }
+  
+  emailError.value = ''
+  return true
+}
+
+const validatePassword = () => {
+  const password = formData.value.password
+  
+  if (!password) {
+    passwordError.value = 'Password is required'
+    return false
+  }
+  
+  if (password.length < 6) {
+    passwordError.value = 'Password must be at least 6 characters'
+    return false
+  }
+  
+  passwordError.value = ''
+  return true
+}
+
+const isFormValid = computed(() => {
+  return formData.value.email && 
+         formData.value.password && 
+         !emailError.value && 
+         !passwordError.value
+})
 
 const handleLogin = async () => {
+  // Validate both fields
+  const isEmailValid = validateEmail()
+  const isPasswordValid = validatePassword()
+  
+  if (!isEmailValid || !isPasswordValid) {
+    showToast('Please fix the errors before submitting', 'error')
+    return
+  }
+  
   loading.value = true
   error.value = null
 
-  const result = await authStore.login(formData.value.email, formData.value.password)
+  try {
+    const result = await authStore.login(
+      formData.value.email, 
+      formData.value.password,
+      rememberMe.value
+    )
 
-  if (result.success) {
-    showToast('Welcome back! Login successful', 'success', 3000)
-    
-    const redirect = route.query.redirect || '/admin'
-    
-    setTimeout(() => {
-      router.push(redirect)
-    }, 500)
-  } else {
-    error.value = result.error
-    showToast(result.error, 'error', 4000)
+    if (result.success) {
+      showToast('Welcome back! Login successful', 'success', 3000)
+      
+      const redirect = route.query.redirect || '/admin'
+      
+      setTimeout(() => {
+        router.push(redirect)
+      }, 500)
+    } else {
+      error.value = result.error
+      showToast(result.error, 'error', 4000)
+    }
+  } catch (err) {
+    error.value = 'An unexpected error occurred. Please try again.'
+    showToast('Login failed. Please try again.', 'error')
+  } finally {
+    loading.value = false
   }
-
-  loading.value = false
 }
 </script>
+
+<style scoped>
+/* Add smooth transitions */
+.link {
+  transition: gap 0.2s ease;
+}
+
+/* Pulse animation for loading spinner */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>

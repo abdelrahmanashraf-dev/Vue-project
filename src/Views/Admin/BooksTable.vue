@@ -9,7 +9,7 @@ const authorsStore = useAuthorsStore()
 const booksConfig = {
   entityName: 'Book',
   entityNamePlural: 'Books',
-  icon: '📚',
+  icon: 'fas fa-book',
   basePath: '/admin/books',
   searchField: 'title',
   filterField: 'authorId',

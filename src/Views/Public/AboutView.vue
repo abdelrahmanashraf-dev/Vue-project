@@ -42,7 +42,7 @@
             <div class="card-body">
               <div class="flex items-center gap-4 mb-4">
                 <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                  <span class="text-3xl">🎯</span>
+                  <i class="fas fa-bullseye text-3xl text-primary-content"></i>
                 </div>
                 <h3 class="card-title text-2xl font-serif text-base-content">Our Mission</h3>
               </div>
@@ -59,7 +59,7 @@
             <div class="card-body">
               <div class="flex items-center gap-4 mb-4">
                 <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                  <span class="text-3xl">✨</span>
+                  <i class="fas fa-eye text-3xl text-primary-content"></i>
                 </div>
                 <h3 class="card-title text-2xl font-serif text-base-content">Our Vision</h3>
               </div>
@@ -85,7 +85,9 @@
           <div v-for="value in coreValues" :key="value.title" 
                class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-primary">
             <div class="card-body text-center">
-              <div class="text-5xl mb-4">{{ value.icon }}</div>
+              <div class="text-5xl mb-4">
+                <i :class="[value.icon, value.color]"></i>
+              </div>
               <h3 class="card-title justify-center text-xl font-serif mb-2 text-base-content">
                 {{ value.title }}
               </h3>
@@ -160,7 +162,7 @@
           <li v-for="(milestone, index) in timeline" :key="index">
             <div class="timeline-middle">
               <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                <span class="text-xl">{{ milestone.icon }}</span>
+                <i :class="milestone.icon" class="text-xl text-primary-content"></i>
               </div>
             </div>
             <div :class="index % 2 === 0 ? 'timeline-start md:text-end' : 'timeline-end'">
@@ -218,12 +220,12 @@
           Start your journey through time today.
         </p>
         <div class="flex flex-wrap gap-4 justify-center">
-          <button class="btn btn-primary btn-lg gap-2">
-            <span>📚</span>
+          <router-link to="/books" class="btn btn-primary btn-lg gap-2">
+            <i class="fas fa-book"></i>
             Explore Library
-          </button>
+          </router-link>
           <button class="btn btn-outline btn-lg gap-2">
-            <span>✉️</span>
+            <i class="fas fa-envelope"></i>
             Contact Us
           </button>
         </div>
@@ -237,32 +239,38 @@ import { ref } from "vue";
 
 const coreValues = [
   {
-    icon: "📜",
+    icon: "fas fa-scroll",
+    color: "text-primary",
     title: "Preservation",
     description: "Safeguarding humanity's literary legacy for future generations through digital innovation."
   },
   {
-    icon: "🌍",
+    icon: "fas fa-globe",
+    color: "text-secondary",
     title: "Accessibility",
     description: "Making knowledge available to everyone, everywhere, breaking down barriers to learning."
   },
   {
-    icon: "🤝",
+    icon: "fas fa-users",
+    color: "text-accent",
     title: "Community",
     description: "Building connections between readers, scholars, and cultures across the globe."
   },
   {
-    icon: "🔍",
+    icon: "fas fa-compass",
+    color: "text-primary",
     title: "Discovery",
     description: "Enabling exploration of both familiar classics and hidden literary treasures."
   },
   {
-    icon: "⚖️",
+    icon: "fas fa-balance-scale",
+    color: "text-secondary",
     title: "Integrity",
     description: "Maintaining authenticity and accuracy in every text we preserve and share."
   },
   {
-    icon: "💡",
+    icon: "fas fa-lightbulb",
+    color: "text-accent",
     title: "Innovation",
     description: "Blending ancient wisdom with cutting-edge technology for modern readers."
   }
@@ -299,31 +307,36 @@ const teamMembers = [
 const timeline = [
   {
     year: "2018",
-    icon: "🌱",
+    icon: "fas fa-seedling",
+    color: "text-primary",
     title: "Foundation",
     description: "House of Papyrus was established with a mission to digitize ancient Egyptian texts."
   },
   {
     year: "2019",
-    icon: "📚",
+    icon: "fas fa-book",
+    color: "text-secondary",
     title: "First Collection",
     description: "Launched our inaugural collection of 1,000 digitized manuscripts."
   },
   {
     year: "2021",
-    icon: "🌐",
+    icon: "fas fa-globe-americas",
+    color: "text-accent",
     title: "Global Expansion",
     description: "Expanded our reach to serve readers in over 30 countries worldwide."
   },
   {
     year: "2023",
-    icon: "🏆",
+    icon: "fas fa-trophy",
+    color: "text-primary",
     title: "Recognition",
     description: "Received the UNESCO Digital Heritage Award for excellence in preservation."
   },
   {
     year: "2024",
-    icon: "🚀",
+    icon: "fas fa-rocket",
+    color: "text-secondary",
     title: "New Chapter",
     description: "Introducing interactive features and community-driven collections."
   }
@@ -382,7 +395,3 @@ const faqs = [
   },
 ];
 </script>
-
-<style scoped>
-/* No styles needed - DaisyUI theme handles everything */
-</style>

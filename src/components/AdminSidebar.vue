@@ -21,18 +21,21 @@ const { showToast } = useToast()
 const menuItems = [
   {
     path: '/admin',
-    icon: '📊',
+    icon: 'fas fa-chart-line',
+    iconColor: 'text-primary',
     label: 'Dashboard',
     exact: true
   },
   {
     path: '/admin/books',
-    icon: '📚',
+    icon: 'fas fa-book',
+    iconColor: 'text-secondary',
     label: 'Books'
   },
   {
     path: '/admin/authors',
-    icon: '✍️',
+    icon: 'fas fa-pen-fancy',
+    iconColor: 'text-accent',
     label: 'Authors'
   }
 ]
@@ -73,7 +76,7 @@ const handleLogout = () => {
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
-            <span class="text-primary-content text-xl font-bold">📚</span>
+            <i class="fas fa-book text-primary-content text-xl"></i>
           </div>
           <div>
             <h2 class="text-lg font-bold text-base-content">Admin Panel</h2>
@@ -86,9 +89,7 @@ const handleLogout = () => {
           @click="closeSidebar"
           class="md:hidden p-2 text-base-content/60 hover:text-base-content rounded-lg hover:bg-base-200 transition-all"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <i class="fas fa-times text-lg"></i>
         </button>
       </div>
     </div>
@@ -105,12 +106,13 @@ const handleLogout = () => {
               : 'text-base-content hover:bg-base-200'"
             @click="closeSidebar"
           >
-            <span 
-              class="text-2xl transition-transform" 
-              :class="isActive(item) ? 'scale-110' : 'group-hover:scale-110'"
-            >
-              {{ item.icon }}
-            </span>
+            <i 
+              :class="[
+                item.icon, 
+                'text-2xl transition-transform',
+                isActive(item) ? 'scale-110 text-primary-content' : `${item.iconColor} group-hover:scale-110`
+              ]"
+            ></i>
             <span class="font-semibold">{{ item.label }}</span>
             
             <!-- Active indicator -->
@@ -131,7 +133,7 @@ const handleLogout = () => {
         class="flex items-center gap-3 px-4 py-3 rounded-xl text-base-content hover:bg-base-200 transition-all duration-200 group"
         @click="closeSidebar"
       >
-        <span class="text-2xl group-hover:scale-110 transition-transform">🏠</span>
+        <i class="fas fa-home text-2xl text-primary group-hover:scale-110 transition-transform"></i>
         <span class="font-semibold">Public Site</span>
       </router-link>
     </nav>
@@ -140,7 +142,7 @@ const handleLogout = () => {
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-base-300 bg-base-200">
       <div class="flex items-center gap-3 px-4 py-3 mb-3">
         <div class="avatar">
-          <div class="w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+          <div class="w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 ">
             <img 
               :src="authStore.currentUser?.avatar || 'https://ui-avatars.com/api/?name=Admin+User&background=d4af37&color=fff'" 
               :alt="authStore.currentUser?.name || 'Admin'"
@@ -162,9 +164,7 @@ const handleLogout = () => {
         @click="handleLogout"
         class="btn btn-error btn-outline btn-sm w-full gap-2"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
+        <i class="fas fa-sign-out-alt"></i>
         Logout
       </button>
     </div>

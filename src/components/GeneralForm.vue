@@ -2,6 +2,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Toast from '@/components/Ui/Toast.vue'
+import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue'
+import EmptyState from '@/components/Ui/EmptyState.vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -46,6 +48,8 @@ const form = ref(initForm())
 const errors = ref({})
 const tagInput = ref('')
 const submitting = ref(false)
+const loading = ref(false)
+const loadError = ref(null)
 
 const toast = ref({
   show: false,
@@ -54,14 +58,23 @@ const toast = ref({
 })
 
 onMounted(async () => {
-  // Fetch related data if needed
-  if (props.relatedStore) {
-    await props.relatedStore.fetchAuthors?.() || await props.relatedStore.fetchBooks?.()
-  }
+  loading.value = true
+  loadError.value = null
+  
+  try {
+    // Fetch related data if needed
+    if (props.relatedStore) {
+      await props.relatedStore.fetchAuthors?.() || await props.relatedStore.fetchBooks?.()
+    }
 
-  // Load item data in edit mode
-  if (isEditMode.value) {
-    await loadItem()
+    // Load item data in edit mode
+    if (isEditMode.value) {
+      await loadItem()
+    }
+  } catch (error) {
+    loadError.value = `Failed to load ${props.config.entityName.toLowerCase()} data`
+  } finally {
+    loading.value = false
   }
 })
 
@@ -84,10 +97,30 @@ const loadItem = async () => {
       await Promise.all(
         props.config.fields.map(field => validateField(field))
       )
+    } else {
+      throw new Error('Item not found')
     }
   } catch (error) {
-    showToast(`Failed to load ${props.config.entityName.toLowerCase()}`, 'error')
-    router.push(props.config.basePath)
+    throw error
+  }
+}
+
+const retryLoad = async () => {
+  loading.value = true
+  loadError.value = null
+  
+  try {
+    if (props.relatedStore) {
+      await props.relatedStore.fetchAuthors?.() || await props.relatedStore.fetchBooks?.()
+    }
+    
+    if (isEditMode.value) {
+      await loadItem()
+    }
+  } catch (error) {
+    loadError.value = `Failed to load ${props.config.entityName.toLowerCase()} data`
+  } finally {
+    loading.value = false
   }
 }
 
@@ -354,16 +387,15 @@ const closeToast = () => {
           @click="cancel"
           class="btn btn-ghost gap-2 mb-6"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
+          <i class="fas fa-arrow-left"></i>
           Back to {{ config.entityNamePlural }}
         </button>
         
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent p-8 shadow-xl">
           <div class="relative z-10">
             <h1 class="text-4xl font-bold text-primary-content mb-2 drop-shadow-lg">
-              {{ isEditMode ? '✏️' : '➕' }} {{ pageTitle }}
+              <i :class="isEditMode ? 'fas fa-edit text-secondary' : 'fas fa-plus-circle text-accent'"></i>
+              {{ pageTitle }}
             </h1>
             <p class="text-primary-content/90 text-lg">
               {{ isEditMode 
@@ -377,8 +409,41 @@ const closeToast = () => {
         </div>
       </div>
 
+      <!-- Loading State -->
+      <LoadingSpinner 
+        v-if="loading"
+        :message="`Loading ${config.entityName.toLowerCase()} data...`"
+        subtext="Please wait"
+        size="lg"
+      />
+
+      <!-- Load Error State -->
+      <EmptyState
+        v-else-if="loadError"
+        icon="fas fa-exclamation-triangle"
+        icon-color="error"
+        :title="`Failed to Load ${config.entityName}`"
+        :description="loadError"
+        action-text="Try Again"
+        action-icon="fas fa-redo"
+        action-button-class="btn-error"
+        :show-default-action="true"
+        @action="retryLoad"
+      >
+        <template #actions>
+          <button @click="retryLoad" class="btn btn-error gap-2">
+            <i class="fas fa-redo"></i>
+            Try Again
+          </button>
+          <button @click="cancel" class="btn btn-ghost gap-2">
+            <i class="fas fa-arrow-left"></i>
+            Go Back
+          </button>
+        </template>
+      </EmptyState>
+
       <!-- Form -->
-      <form @submit.prevent="submitForm" class="card bg-base-100 shadow-xl p-8 border border-base-300">
+      <form v-else @submit.prevent="submitForm" class="card bg-base-100 shadow-xl p-8 border border-base-300">
         <div class="space-y-6">
           <div
             v-for="field in config.fields"
@@ -389,7 +454,7 @@ const closeToast = () => {
             <div v-if="field.type === 'text'" class="form-control">
               <label class="label">
                 <span class="label-text font-bold">
-                  {{ field.icon }} {{ field.label }}
+                  <i :class="[field.icon, 'text-primary mr-2']"></i>{{ field.label }}
                   <span v-if="field.required" class="text-error">*</span>
                 </span>
               </label>
@@ -415,7 +480,7 @@ const closeToast = () => {
             <div v-else-if="field.type === 'number'" class="form-control">
               <label class="label">
                 <span class="label-text font-bold">
-                  {{ field.icon }} {{ field.label }}
+                  <i :class="[field.icon, 'text-secondary mr-2']"></i>{{ field.label }}
                   <span v-if="field.required" class="text-error">*</span>
                 </span>
               </label>
@@ -437,7 +502,7 @@ const closeToast = () => {
             <div v-else-if="field.type === 'select'" class="form-control">
               <label class="label">
                 <span class="label-text font-bold">
-                  {{ field.icon }} {{ field.label }}
+                  <i :class="[field.icon, 'text-accent mr-2']"></i>{{ field.label }}
                   <span v-if="field.required" class="text-error">*</span>
                 </span>
               </label>
@@ -465,7 +530,7 @@ const closeToast = () => {
             <div v-else-if="field.type === 'tags'" class="form-control">
               <label class="label">
                 <span class="label-text font-bold">
-                  {{ field.icon }} {{ field.label }}
+                  <i :class="[field.icon, 'text-primary mr-2']"></i>{{ field.label }}
                   <span v-if="field.maxItems">(Max {{ field.maxItems }})</span>
                 </span>
               </label>
@@ -483,7 +548,7 @@ const closeToast = () => {
                   :disabled="field.maxItems && form[field.key].length >= field.maxItems"
                   class="btn btn-primary join-item"
                 >
-                  Add
+                  <i class="fas fa-plus mr-1"></i> Add
                 </button>
               </div>
 
@@ -494,7 +559,9 @@ const closeToast = () => {
                   class="badge badge-primary gap-2"
                 >
                   {{ tag }}
-                  <button type="button" @click="removeTag(field, idx)" class="btn btn-ghost btn-xs btn-circle">×</button>
+                  <button type="button" @click="removeTag(field, idx)" class="btn btn-ghost btn-xs btn-circle">
+                    <i class="fas fa-times text-xs"></i>
+                  </button>
                 </div>
               </div>
 
@@ -507,7 +574,9 @@ const closeToast = () => {
             <!-- Textarea -->
             <div v-else-if="field.type === 'textarea'" class="form-control">
               <label class="label">
-                <span class="label-text font-bold">{{ field.icon }} {{ field.label }}</span>
+                <span class="label-text font-bold">
+                  <i :class="[field.icon, 'text-secondary mr-2']"></i>{{ field.label }}
+                </span>
               </label>
               <textarea
                 v-model="form[field.key]"
@@ -528,7 +597,9 @@ const closeToast = () => {
             <!-- URL -->
             <div v-else-if="field.type === 'url'" class="form-control">
               <label class="label">
-                <span class="label-text font-bold">{{ field.icon }} {{ field.label }}</span>
+                <span class="label-text font-bold">
+                  <i :class="[field.icon, 'text-accent mr-2']"></i>{{ field.label }}
+                </span>
               </label>
               <input
                 v-model="form[field.key]"
@@ -552,7 +623,7 @@ const closeToast = () => {
             @click="cancel"
             class="btn btn-ghost"
           >
-            Cancel
+            <i class="fas fa-times mr-1"></i> Cancel
           </button>
           <button
             type="submit"
@@ -560,6 +631,7 @@ const closeToast = () => {
             class="btn btn-primary"
           >
             <span v-if="submitting" class="loading loading-spinner loading-sm"></span>
+            <i v-else :class="isEditMode ? 'fas fa-save' : 'fas fa-plus'" class="mr-1"></i>
             <span v-if="submitting">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
             <span v-else>{{ isEditMode ? `Update ${config.entityName}` : `Create ${config.entityName}` }}</span>
           </button>
@@ -567,7 +639,7 @@ const closeToast = () => {
 
         <!-- Validation Warning -->
         <div v-if="!isFormValid && !isEditMode" class="alert alert-warning mt-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          <i class="fas fa-exclamation-triangle text-2xl"></i>
           <span>Please fill in all required fields marked with <span class="text-error">*</span></span>
         </div>
       </form>

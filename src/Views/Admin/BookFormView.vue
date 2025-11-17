@@ -9,7 +9,7 @@ const authorsStore = useAuthorsStore()
 const bookFormConfig = {
   entityName: 'Book',
   entityNamePlural: 'Books',
-  icon: '📚',
+  icon: 'fas fa-book',
   basePath: '/admin/books',
   fields: [
     {
@@ -19,7 +19,7 @@ const bookFormConfig = {
       required: true,
       minLength: 3,
       maxLength: 100,
-      icon: '📖'
+      icon: 'fas fa-heading'
     },
     {
       key: 'authorId',
@@ -29,7 +29,7 @@ const bookFormConfig = {
       validateExists: true,
       options: (relatedStore) => relatedStore.authors,
       optionLabel: (opt) => opt.name,
-      icon: '✍️'
+      icon: 'fas fa-user-edit'
     },
     {
       key: 'year',
@@ -38,7 +38,7 @@ const bookFormConfig = {
       required: true,
       min: 1800,
       max: () => new Date().getFullYear(),
-      icon: '📅'
+      icon: 'fas fa-calendar'
     },
     {
       key: 'tags',
@@ -47,13 +47,13 @@ const bookFormConfig = {
       maxItems: 8,
       minLength: 2,
       maxLength: 20,
-      icon: '🏷️'
+      icon: 'fas fa-tags'
     },
     {
       key: 'coverUrl',
       label: 'Cover Image URL',
       type: 'url',
-      icon: '🖼️'
+      icon: 'fas fa-image'
     },
     {
       key: 'description',
@@ -61,7 +61,7 @@ const bookFormConfig = {
       type: 'textarea',
       maxLength: 2000,
       rows: 6,
-      icon: '📝'
+      icon: 'fas fa-align-left'
     }
   ],
   checkDuplicate: async (form, store, itemId) => {

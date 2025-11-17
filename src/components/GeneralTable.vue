@@ -2,6 +2,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Toast from '@/components/Ui/Toast.vue'
+import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue'
+import EmptyState from '@/components/Ui/EmptyState.vue'
 
 const props = defineProps({
   store: {
@@ -124,6 +126,11 @@ const closeToast = () => {
   toast.value.show = false
 }
 
+const clearFilters = () => {
+  searchQuery.value = ''
+  selectedFilter.value = ''
+}
+
 // Get display name for the item
 const getItemDisplayName = (item) => {
   return item[props.config.searchField] || item.title || item.name || 'Item'
@@ -138,7 +145,7 @@ const getItemDisplayName = (item) => {
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent p-8 shadow-xl">
           <div class="relative z-10">
             <h1 class="text-4xl font-bold text-primary-content mb-2 drop-shadow-lg">
-              {{ config.icon }} Manage {{ config.entityNamePlural }}
+              <i :class="[config.icon, 'mr-3']"></i>Manage {{ config.entityNamePlural }}
             </h1>
             <p class="text-primary-content/90 text-lg">
               Create, edit, and organize your {{ config.entityNamePlural.toLowerCase() }}
@@ -155,7 +162,7 @@ const getItemDisplayName = (item) => {
           <!-- Search -->
           <div :class="config.filterField ? 'lg:col-span-2' : 'lg:col-span-3'">
             <label class="block text-sm font-semibold text-base-content mb-2">
-               Search by {{ config.searchField }}
+              <i class="fas fa-search text-primary mr-2"></i>Search by {{ config.searchField }}
             </label>
             <div class="relative">
               <input
@@ -164,14 +171,13 @@ const getItemDisplayName = (item) => {
                 :placeholder="`Search ${config.entityNamePlural.toLowerCase()}...`"
                 class="input input-bordered w-full"
               />
-              
             </div>
           </div>
 
           <!-- Filter (if configured) -->
           <div v-if="config.filterField && filterOptions.length > 0">
             <label class="block text-sm font-semibold text-base-content mb-2">
-               Filter by {{ config.filterLabel }}
+              <i class="fas fa-filter text-secondary mr-2"></i>Filter by {{ config.filterLabel }}
             </label>
             <select
               v-model="selectedFilter"
@@ -194,9 +200,7 @@ const getItemDisplayName = (item) => {
               @click="goToCreate"
               class="btn btn-primary w-full gap-2"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
+              <i class="fas fa-plus"></i>
               Add New {{ config.entityName }}
             </button>
           </div>
@@ -209,52 +213,39 @@ const getItemDisplayName = (item) => {
               @click="viewMode = 'grid'"
               :class="['btn btn-sm', viewMode === 'grid' ? 'btn-active' : '']"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
+              <i class="fas fa-th"></i>
             </button>
             <button
               @click="viewMode = 'list'"
               :class="['btn btn-sm', viewMode === 'list' ? 'btn-active' : '']"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <i class="fas fa-list"></i>
             </button>
           </div>
         </div>
       </div>
 
       <!-- Loading State -->
-      <div v-if="store.loading" class="flex justify-center items-center py-20">
-        <span class="loading loading-spinner loading-lg text-primary"></span>
-      </div>
+      <LoadingSpinner 
+        v-if="store.loading"
+        :message="`Loading ${config.entityNamePlural.toLowerCase()}...`"
+        size="lg"
+      />
 
       <!-- Empty State -->
-      <div
+      <EmptyState
         v-else-if="filteredItems.length === 0"
-        class="card bg-base-100 shadow-lg p-12 text-center border border-base-300"
-      >
-        <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full flex items-center justify-center">
-          <span class="text-6xl">{{ config.icon }}</span>
-        </div>
-        <h3 class="text-2xl font-bold text-base-content mb-3">
-          No {{ config.entityNamePlural.toLowerCase() }} found
-        </h3>
-        <p class="text-base-content/60 mb-8 max-w-md mx-auto">
-          {{ searchQuery || selectedFilter 
-            ? 'Try adjusting your filters to find what you\'re looking for' 
-            : `Start by adding your first ${config.entityName.toLowerCase()}` 
-          }}
-        </p>
-        <button
-          v-if="!searchQuery && !selectedFilter"
-          @click="goToCreate"
-          class="btn btn-primary"
-        >
-          Add Your First {{ config.entityName }}
-        </button>
-      </div>
+        :icon="config.icon || 'fas fa-folder-open'"
+        icon-color="primary"
+        :title="`No ${config.entityNamePlural} Found`"
+        :description="searchQuery || selectedFilter 
+          ? 'Try adjusting your filters to find what you\'re looking for' 
+          : `No ${config.entityNamePlural.toLowerCase()} have been added yet. Start building your collection!`"
+        :action-text="searchQuery || selectedFilter ? 'Clear Filters' : `Add ${config.entityName}`"
+        :action-icon="searchQuery || selectedFilter ? 'fas fa-times' : 'fas fa-plus'"
+        :show-default-action="true"
+        @action="searchQuery || selectedFilter ? clearFilters() : goToCreate()"
+      />
 
       <!-- Grid View -->
       <div v-else-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -277,18 +268,14 @@ const getItemDisplayName = (item) => {
                   class="btn btn-circle btn-sm btn-primary"
                   title="Edit"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
+                  <i class="fas fa-edit"></i>
                 </button>
                 <button
                   @click="confirmDelete(item)"
                   class="btn btn-circle btn-sm btn-error"
                   title="Delete"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
+                  <i class="fas fa-trash"></i>
                 </button>
               </div>
             </div>
@@ -365,18 +352,14 @@ const getItemDisplayName = (item) => {
                       class="btn btn-primary btn-sm"
                       title="Edit"
                     >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
+                      <i class="fas fa-edit"></i>
                     </button>
                     <button
                       @click="confirmDelete(item)"
                       class="btn btn-error btn-sm"
                       title="Delete"
                     >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
+                      <i class="fas fa-trash"></i>
                     </button>
                   </div>
                 </div>
@@ -427,9 +410,7 @@ const getItemDisplayName = (item) => {
         <div class="modal-box">
           <div class="flex items-center gap-4 mb-6">
             <div class="w-14 h-14 bg-error/20 rounded-2xl flex items-center justify-center">
-              <svg class="w-7 h-7 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
+              <i class="fas fa-exclamation-triangle text-3xl text-error"></i>
             </div>
             <div>
               <h3 class="font-bold text-xl text-base-content">Delete {{ config.entityName }}</h3>
@@ -449,13 +430,13 @@ const getItemDisplayName = (item) => {
               @click="cancelDelete"
               class="btn btn-ghost"
             >
-              Cancel
+              <i class="fas fa-times mr-1"></i> Cancel
             </button>
             <button
               @click="deleteItem"
               class="btn btn-error"
             >
-              Delete
+              <i class="fas fa-trash mr-1"></i> Delete
             </button>
           </div>
         </div>

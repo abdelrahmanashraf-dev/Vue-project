@@ -7,7 +7,7 @@ const authorsStore = useAuthorsStore()
 const authorsConfig = {
   entityName: 'Author',
   entityNamePlural: 'Authors',
-  icon: '✍️',
+  icon: 'fas fa-pen-fancy',
   basePath: '/admin/authors',
   searchField: 'name',
   columns: [

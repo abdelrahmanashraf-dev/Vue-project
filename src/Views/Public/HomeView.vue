@@ -16,9 +16,9 @@
           where scrolls wrote stories, and imagination was immortalised in papyrus.
         </p>
 
-        <a href="/about" class="btn btn-primary rounded-full shadow-lg transition-transform hover:scale-105 text-base py-2.5 sm:py-3 px-6 sm:px-8">
+        <router-link to="/books" class="btn btn-primary rounded-full shadow-lg transition-transform hover:scale-105 text-base py-2.5 sm:py-3 px-6 sm:px-8">
           Enter the Library
-        </a>
+        </router-link>
       </div>
       
       <div class="absolute top-0 left-0 w-32 h-32 sm:w-52 sm:h-52 bg-primary opacity-10 blur-3xl rounded-full"></div>
@@ -40,7 +40,9 @@
         <div v-for="feature in features" :key="feature.title"
              class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-primary">
           <div class="card-body text-center">
-            <div class="text-5xl mb-4">{{ feature.icon }}</div>
+            <div class="text-5xl mb-4">
+              <i :class="[feature.icon, feature.color]"></i>
+            </div>
             <h3 class="card-title justify-center text-xl font-serif mb-2 text-base-content">
               {{ feature.title }}
             </h3>
@@ -69,28 +71,26 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16">
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12">
-        <span class="loading loading-spinner loading-lg text-primary"></span>
-        <p class="mt-4 text-sm sm:text-base text-base-content/70">Loading books...</p>
-      </div>
+      <LoadingSpinner 
+        v-if="loading"
+        message="Loading books..."
+        subtext="Please wait while we gather our collection"
+        size="lg"
+      />
 
       <!-- Error State -->
-      <div v-else-if="error" class="alert alert-error shadow-lg max-w-lg mx-auto" role="alert">
-        <div>
-          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2 2m2-2l2 2m7-2.93V5.93c0-.621-.504-1.125-1.125-1.125h-10.5c-.621 0-1.125.504-1.125 1.125v12.15c0 .621.504 1.125 1.125 1.125h10.5c.621 0 1.125-.504 1.125-1.125v-2.93a.926.926 0 00-.926-.926h-1.074a.926.926 0 00-.926.926v2.93h-8.45v-12.15h8.45v2.93a.926.926 0 00.926.926h1.074c.51 0 .926-.416.926-.926z" />
-          </svg>
-          <div>
-            <strong>Error!</strong>
-            <p class="text-sm">{{ error }}</p>
-          </div>
-        </div>
-        <div class="flex-none">
-          <button @click="fetchBooks" class="btn btn-sm">
-            Retry
-          </button>
-        </div>
-      </div>
+      <EmptyState
+        v-else-if="error"
+        icon="fas fa-exclamation-circle"
+        icon-color="error"
+        :title="'Oops! Something went wrong'"
+        :description="error"
+        action-text="Try Again"
+        action-icon="fas fa-redo"
+        action-button-class="btn-error"
+        :show-default-action="true"
+        @action="fetchBooks"
+      />
 
       <!-- Books Section -->
       <div v-else>
@@ -100,13 +100,22 @@
           </h2>
           <a href="/books" class="btn btn-outline btn-sm gap-2">
             View All
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
+            <i class="fas fa-chevron-right"></i>
           </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 xl:gap-8">
+        <!-- Empty State for no books -->
+        <EmptyState
+          v-if="books.length === 0"
+          icon="fas fa-book-open"
+          icon-color="primary"
+          title="No Books Available Yet"
+          description="Our collection is currently empty. Check back soon for amazing reads!"
+          size="md"
+        />
+
+        <!-- Books Grid -->
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 xl:gap-8">
           <BookCard v-for="book in featuredBooks" :key="book.id" :book="book" />
         </div>
         
@@ -136,7 +145,7 @@
                class="card bg-base-200 hover:bg-primary hover:text-primary-content shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
             <div class="card-body items-center text-center p-6">
               <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">
-                {{ genre.icon }}
+                <i :class="[genre.icon, genre.color, 'group-hover:text-primary-content']"></i>
               </div>
               <h3 class="font-semibold text-lg">{{ genre.name }}</h3>
               <p class="text-sm opacity-70">{{ genre.count }} books</p>
@@ -163,7 +172,7 @@
                class="card bg-base-100 shadow-xl">
             <div class="card-body">
               <div class="flex items-center gap-1 mb-4">
-                <span v-for="i in 5" :key="i" class="text-primary text-xl">⭐</span>
+                <i v-for="i in 5" :key="i" class="fas fa-star text-primary text-xl"></i>
               </div>
               <p class="text-base-content/80 italic mb-4">"{{ testimonial.text }}"</p>
               <div class="flex items-center gap-3 mt-auto">
@@ -186,7 +195,9 @@
     <!-- Newsletter Section -->
     <section class="bg-gradient-to-r from-primary/20 to-secondary/20 py-16">
       <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-        <div class="text-5xl mb-6">📬</div>
+        <div class="text-5xl mb-6">
+          <i class="fas fa-envelope text-primary"></i>
+        </div>
         <h2 class="text-3xl sm:text-4xl font-serif font-bold text-base-content mb-4">
           Stay Updated
         </h2>
@@ -211,29 +222,38 @@
 
 <script>
 import BookCard from "@/components/Books/BookCard.vue";
+import LoadingSpinner from "@/components/Ui/LoadingSpinner.vue";
+import EmptyState from "@/components/Ui/EmptyState.vue";
 
 export default {
   name: "HomeView",
-  components: { BookCard },
+  components: { 
+    BookCard,
+    LoadingSpinner,
+    EmptyState
+  },
   data() {
     return {
       books: [],
       loading: false,
       error: null,
-      maxBooksToShow: 6, // عدد الكتب اللي هتظهر في الهوم
+      maxBooksToShow: 6,
       features: [
         {
-          icon: "📚",
+          icon: "fas fa-book",
+          color: "text-primary",
           title: "Vast Collection",
           description: "Access thousands of books spanning multiple genres and time periods"
         },
         {
-          icon: "🔍",
+          icon: "fas fa-search",
+          color: "text-secondary",
           title: "Smart Search",
           description: "Find exactly what you're looking for with our advanced search system"
         },
         {
-          icon: "💎",
+          icon: "fas fa-gem",
+          color: "text-accent",
           title: "Curated Selection",
           description: "Hand-picked titles ensuring quality and relevance for every reader"
         }
@@ -245,14 +265,14 @@ export default {
         { value: "4.9★", label: "Rating" }
       ],
       genres: [
-        { name: "Fiction", icon: "📖", count: 12500 },
-        { name: "History", icon: "🏛️", count: 8300 },
-        { name: "Science", icon: "🔬", count: 6700 },
-        { name: "Poetry", icon: "✍️", count: 4200 },
-        { name: "Philosophy", icon: "🤔", count: 5500 },
-        { name: "Biography", icon: "👤", count: 3800 },
-        { name: "Mystery", icon: "🔎", count: 7100 },
-        { name: "Romance", icon: "💕", count: 9200 }
+        { name: "Fiction", icon: "fas fa-book-open", color: "text-primary", count: 12500 },
+        { name: "History", icon: "fas fa-landmark", color: "text-secondary", count: 8300 },
+        { name: "Science", icon: "fas fa-flask", color: "text-accent", count: 6700 },
+        { name: "Poetry", icon: "fas fa-feather-alt", color: "text-primary", count: 4200 },
+        { name: "Philosophy", icon: "fas fa-brain", color: "text-secondary", count: 5500 },
+        { name: "Biography", icon: "fas fa-user", color: "text-accent", count: 3800 },
+        { name: "Mystery", icon: "fas fa-search", color: "text-primary", count: 7100 },
+        { name: "Romance", icon: "fas fa-heart", color: "text-secondary", count: 9200 }
       ],
       testimonials: [
         {
@@ -280,7 +300,6 @@ export default {
     this.fetchBooks();
   },
   computed: {
-    // عرض أول 6 كتب بس
     featuredBooks() {
       return this.books.slice(0, this.maxBooksToShow);
     }
@@ -308,7 +327,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* No styles needed - DaisyUI theme handles everything */
-</style>

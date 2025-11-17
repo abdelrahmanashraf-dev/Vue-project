@@ -33,20 +33,29 @@
           </div>
         </div>
 
-        <div v-if="loading" class="text-center py-10">
-          <span class="loading loading-lg loading-spinner text-primary"></span>
-          <p class="mt-2">Loading books...</p>
-        </div>
+        <!-- Loading State -->
+        <LoadingSpinner 
+          v-if="loading"
+          message="Loading books..."
+          subtext="Fetching your library collection"
+          size="lg"
+        />
 
-        <div v-else-if="error" class="alert alert-error shadow-lg" role="alert">
-          <div>
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2 2m2-2l2 2m7-2.93V5.93c0-.621-.504-1.125-1.125-1.125h-10.5c-.621 0-1.125.504-1.125 1.125v12.15c0 .621.504 1.125 1.125 1.125h10.5c.621 0 1.125-.504 1.125-1.125v-2.93a.926.926 0 00-.926-.926h-1.074a.926.926 0 00-.926.926v2.93h-8.45v-12.15h8.45v2.93a.926.926 0 00.926.926h1.074c.51 0 .926-.416.926-.926z" />
-            </svg>
-            <strong>Error!</strong> {{ error.message }}
-          </div>
-        </div>
+        <!-- Error State -->
+        <EmptyState
+          v-else-if="error"
+          icon="fas fa-exclamation-triangle"
+          icon-color="error"
+          title="Failed to Load Books"
+          :description="error.message"
+          action-text="Retry"
+          action-icon="fas fa-redo"
+          action-button-class="btn-error"
+          :show-default-action="true"
+          @action="fetchBooks"
+        />
 
+        <!-- Books Table -->
         <div v-else-if="filteredBooks.length">
           <div class="overflow-x-auto">
             <table class="table w-full table-zebra">
@@ -115,14 +124,27 @@
           </div>
         </div>
         
-        <div v-else class="alert alert-info shadow-lg">
-          <div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span>No books match your search criteria.</span>
-          </div>
-        </div>
+        <!-- Empty State -->
+        <EmptyState
+          v-else
+          icon="fas fa-book"
+          icon-color="primary"
+          title="No Books Found"
+          :description="searchQuery || selectedAuthorId 
+            ? 'Try adjusting your filters to find what you\'re looking for' 
+            : 'No books have been added yet. Start building your library!'"
+          action-text="Clear Filters"
+          action-icon="fas fa-filter-circle-xmark"
+          :show-default-action="!!(searchQuery || selectedAuthorId)"
+          @action="clearFilters"
+        >
+          <template v-if="!searchQuery && !selectedAuthorId" #actions>
+            <button class="btn btn-primary gap-2">
+              <i class="fas fa-plus"></i>
+              Add Your First Book
+            </button>
+          </template>
+        </EmptyState>
 
       </div>
     </div>
@@ -133,6 +155,8 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useToast } from '@/composables/useToast';
+import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue';
+import EmptyState from '@/components/Ui/EmptyState.vue';
 import axios from 'axios';
 
 const router = useRouter();
@@ -171,6 +195,9 @@ async function fetchAuthors() {
 
 // Fetch books
 async function fetchBooks() {
+  loading.value = true;
+  error.value = null;
+  
   try {
     const response = await axios.get('http://localhost:3000/books');
     books.value = response.data;
@@ -322,7 +349,3 @@ onMounted(async () => {
   await fetchBooks();
 });
 </script>
-
-<style scoped>
-/* No styles needed - DaisyUI theme handles everything */
-</style>

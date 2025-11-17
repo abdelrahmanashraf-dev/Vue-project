@@ -1,6 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import LoadingSpinner from '@/components/Ui/LoadingSpinner.vue'
+import EmptyState from '@/components/Ui/EmptyState.vue'
 import axios from 'axios'
+
+const router = useRouter()
 
 const books = ref([])
 const authors = ref([])
@@ -10,11 +15,14 @@ const topAuthor = ref(null)
 const topTag = ref('-')
 const latestBooks = ref([])
 const loading = ref(true)
+const error = ref(null)
 
 const getAuthorName = (id) => authors.value.find(a => a.id == id)?.name || '-'
 
 const fetchDashboardData = async () => {
   loading.value = true
+  error.value = null
+  
   try {
     const [booksRes, authorsRes] = await Promise.all([
       axios.get('http://localhost:3000/books'),
@@ -46,11 +54,20 @@ const fetchDashboardData = async () => {
 
     // Latest 5 books
     latestBooks.value = books.value.slice(-5).reverse()
-  } catch (error) {
-    console.error('Error fetching dashboard data:', error)
+  } catch (err) {
+    console.error('Error fetching dashboard data:', err)
+    error.value = 'Failed to load dashboard data. Please try again.'
   } finally {
     loading.value = false
   }
+}
+
+const retryFetch = () => {
+  fetchDashboardData()
+}
+
+const goToBooks = () => {
+  router.push('/admin/books')
 }
 
 onMounted(fetchDashboardData)
@@ -61,7 +78,9 @@ onMounted(fetchDashboardData)
   <div class="mb-8">
     <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-accent p-8 shadow-xl">
       <div class="relative z-10">
-        <h1 class="text-4xl sm:text-3xl font-bold text-primary-content mb-2 drop-shadow-lg">📊 Dashboard Overview</h1>
+        <h1 class="text-4xl sm:text-3xl font-bold text-primary-content mb-2 drop-shadow-lg">
+          <i class="fas fa-chart-line mr-3 text-accent"></i>Dashboard Overview
+        </h1>
         <p class="text-primary-content/90 text-lg sm:text-sm">Welcome back! Here's what's happening with your library</p>
       </div>
       <div class="absolute top-0 right-0 w-64 h-64 sm:w-40 sm:h-40 bg-base-100 opacity-10 rounded-full -mr-32 -mt-32"></div>
@@ -70,10 +89,28 @@ onMounted(fetchDashboardData)
   </div>
 
   <!-- Loading State -->
-  <div v-if="loading" class="flex justify-center items-center py-20">
-    <span class="loading loading-spinner loading-lg text-primary"></span>
-  </div>
+  <LoadingSpinner 
+    v-if="loading"
+    message="Loading dashboard..."
+    subtext="Gathering your library statistics"
+    size="lg"
+  />
 
+  <!-- Error State -->
+  <EmptyState
+    v-else-if="error"
+    icon="fas fa-exclamation-circle"
+    icon-color="error"
+    title="Failed to Load Dashboard"
+    :description="error"
+    action-text="Retry"
+    action-icon="fas fa-redo"
+    action-button-class="btn-error"
+    :show-default-action="true"
+    @action="retryFetch"
+  />
+
+  <!-- Dashboard Content -->
   <div v-else>
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -82,7 +119,7 @@ onMounted(fetchDashboardData)
         <div class="card-body">
           <div class="flex items-center justify-between mb-4">
             <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-primary-focus rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-              <span class="text-2xl sm:text-xl">📚</span>
+              <i class="fas fa-book text-2xl sm:text-xl text-primary-content"></i>
             </div>
             <span class="badge badge-primary">Total</span>
           </div>
@@ -96,7 +133,7 @@ onMounted(fetchDashboardData)
         <div class="card-body">
           <div class="flex items-center justify-between mb-4">
             <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-secondary to-secondary-focus rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-              <span class="text-2xl sm:text-xl">✍️</span>
+              <i class="fas fa-pen-fancy text-2xl sm:text-xl text-secondary-content"></i>
             </div>
             <span class="badge badge-secondary">Total</span>
           </div>
@@ -110,7 +147,7 @@ onMounted(fetchDashboardData)
         <div class="card-body">
           <div class="flex items-center justify-between mb-4">
             <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-accent to-accent-content rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-              <span class="text-2xl sm:text-xl">🏆</span>
+              <i class="fas fa-trophy text-2xl sm:text-xl text-accent-content"></i>
             </div>
             <span class="badge badge-accent">Top</span>
           </div>
@@ -126,7 +163,7 @@ onMounted(fetchDashboardData)
         <div class="card-body">
           <div class="flex items-center justify-between mb-4">
             <div class="w-14 h-14 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-              <span class="text-2xl sm:text-xl">🏷️</span>
+              <i class="fas fa-tags text-2xl sm:text-xl text-primary-content"></i>
             </div>
             <span class="badge badge-outline">Popular</span>
           </div>
@@ -143,18 +180,36 @@ onMounted(fetchDashboardData)
       <div class="card-body">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h2 class="text-2xl sm:text-xl font-bold text-base-content mb-1">📖 Recently Added Books</h2>
+            <h2 class="text-2xl sm:text-xl font-bold text-base-content mb-1">
+              <i class="fas fa-book-open mr-2"></i>Recently Added Books
+            </h2>
             <p class="text-base-content/70 text-sm">Latest additions to your library</p>
           </div>
           <router-link
             to="/admin/books"
             class="btn btn-primary btn-sm"
           >
-            View All →
+            View All <i class="fas fa-arrow-right ml-1"></i>
           </router-link>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- Empty State for no books -->
+        <EmptyState
+          v-if="latestBooks.length === 0"
+          icon="fas fa-book-open"
+          icon-color="info"
+          title="No Books Added Yet"
+          description="Start building your library by adding your first book"
+          action-text="Add Book"
+          action-icon="fas fa-plus"
+          action-button-class="btn-primary"
+          :show-default-action="true"
+          @action="goToBooks"
+          size="sm"
+        />
+
+        <!-- Books Table -->
+        <div v-else class="overflow-x-auto">
           <table class="table table-zebra w-full">
             <thead>
               <tr>
@@ -206,14 +261,6 @@ onMounted(fetchDashboardData)
                     >
                       +{{ book.tags.length - 2 }}
                     </span>
-                  </div>
-                </td>
-              </tr>
-              <tr v-if="latestBooks.length === 0">
-                <td colspan="5" class="text-center py-12">
-                  <div class="text-base-content/50">
-                    <span class="text-4xl mb-2 block">📚</span>
-                    <p class="text-sm">No books added yet</p>
                   </div>
                 </td>
               </tr>
