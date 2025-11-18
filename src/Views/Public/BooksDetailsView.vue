@@ -116,25 +116,25 @@ watch(() => route.params.id, fetchData)
   />
 
   <!-- Book Details -->
-  <section v-else class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <section v-else class="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
     <div :class="isDark
           ? 'bg-base-100 text-base-content border-gray-700'
           : 'bg-base-100 text-base-content border-gray-200'"
          class="flex flex-col lg:flex-row shadow-xl rounded-2xl overflow-hidden border">
 
       <!-- Book Cover -->
-      <figure class="w-full lg:w-1/3 bg-base-200 h-64 sm:h-80 lg:h-auto lg:min-h-[400px]">
+      <figure class="w-full lg:w-1/3 bg-base-200 h-56 sm:h-64 lg:h-auto lg:max-h-[350px]">
         <img :src="book.coverUrl" alt="Book cover"
              class="object-cover w-full h-full transition-transform duration-300 hover:scale-105"/>
       </figure>
 
       <!-- Book Info -->
-      <div class="p-4 sm:p-6 lg:w-2/3 flex flex-col justify-between">
+      <div class="p-3 sm:p-4 lg:w-2/3 flex flex-col justify-between">
         <div>
-          <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 text-primary">{{ book.title }}</h2>
-          <p class="leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base line-clamp-4 sm:line-clamp-none">{{ book.description }}</p>
+          <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold mb-1.5 sm:mb-2 text-primary">{{ book.title }}</h2>
+          <p class="leading-relaxed mb-2 sm:mb-3 text-sm sm:text-base line-clamp-4 sm:line-clamp-none">{{ book.description }}</p>
 
-          <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm mb-4">
+          <ul class="space-y-0.5 sm:space-y-1 text-xs sm:text-sm mb-3">
             <li>
               <span class="font-semibold text-secondary">
                 <i class="fas fa-pen-fancy mr-1 text-primary"></i>Author:
@@ -153,7 +153,7 @@ watch(() => route.params.id, fetchData)
           </ul>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
+        <div class="flex flex-col sm:flex-row gap-2 mt-3">
           <button class="bg-primary hover:bg-primary-focus text-white shadow-md px-4 py-2 rounded-lg transition-colors duration-300 flex items-center justify-center gap-2 text-sm sm:text-base">
             <i class="fas fa-heart text-accent"></i> 
             <span>Add to Wishlist</span>
@@ -169,7 +169,7 @@ watch(() => route.params.id, fetchData)
   </section>
 
   <!-- Related Books -->
-  <section v-if="!loading && !error && relatedBooks.length" class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <section v-if="!loading && !error && relatedBooks.length" class="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
     <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-primary">
       <i class="fas fa-book-reader mr-2 text-secondary"></i>You May Also Like
     </h2>

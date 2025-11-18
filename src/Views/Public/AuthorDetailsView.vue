@@ -123,28 +123,28 @@ watch(() => route.params.id, (newId) => fetchData(newId))
   />
 
   <!-- Author Details -->
-  <section v-else class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <section v-else class="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
     <div :class="isDark ? 'bg-base-100 text-base-content border-gray-700' : 'bg-base-100 text-base-content border-gray-200'" 
          class="flex flex-col lg:flex-row shadow-xl rounded-2xl overflow-hidden border"> 
 
       <!-- Author Avatar -->
-      <figure class="w-full lg:w-1/3 bg-base-200 h-64 sm:h-80 lg:h-auto lg:min-h-[400px]">
+      <figure class="w-full lg:w-1/3 bg-base-200 h-56 sm:h-64 lg:h-auto lg:max-h-[350px]">
         <img :src="author.avatarUrl" alt="Author photo"
              class="object-cover w-full h-full transition-transform duration-300 hover:scale-105"/>
       </figure>
 
       <!-- Author Info -->
-      <div class="p-4 sm:p-6 lg:w-2/3 flex flex-col justify-between">
+      <div class="p-3 sm:p-4 lg:w-2/3 flex flex-col justify-between">
         <div>
-          <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 text-primary">{{ author.name }}</h2>
-          <p class="leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">{{ author.bio }}</p>
+          <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold mb-1.5 sm:mb-2 text-primary">{{ author.name }}</h2>
+          <p class="leading-relaxed mb-2 sm:mb-3 text-sm sm:text-base">{{ author.bio }}</p>
 
           <!-- Author Books Section -->
           <div v-if="authorBooks.length > 0">
-            <h3 class="font-semibold mb-2 text-secondary text-sm sm:text-base">
+            <h3 class="font-semibold mb-1.5 text-secondary text-sm sm:text-base">
               <i class="fas fa-book mr-2 text-primary"></i>Top Works:
             </h3>
-            <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm">
               <li v-for="book in authorBooks" :key="book.id" 
                   class="cursor-pointer hover:text-primary flex items-center gap-2 transition-colors" 
                   @click="goToBook(book.id)">
@@ -161,7 +161,7 @@ watch(() => route.params.id, (newId) => fetchData(newId))
           </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
+        <div class="flex flex-col sm:flex-row gap-2 mt-3">
           <router-link to="/authors"
                        class="border border-primary text-primary hover:bg-primary/10 px-4 py-2 rounded-lg transition-colors duration-300 flex items-center justify-center gap-2 text-sm sm:text-base">
             <i class="fas fa-arrow-left"></i> 
@@ -173,7 +173,7 @@ watch(() => route.params.id, (newId) => fetchData(newId))
   </section>
 
   <!-- Related Authors -->
-  <section v-if="!loading && !error && relatedAuthors.length" class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <section v-if="!loading && !error && relatedAuthors.length" class="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
     <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-primary">
       <i class="fas fa-users mr-2 text-accent"></i>Other Authors
     </h2>
