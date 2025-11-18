@@ -52,6 +52,8 @@ const tagInput = ref('')
 const submitting = ref(false)
 const loading = ref(false)
 const loadError = ref(null)
+const imagePreview = ref({})
+const imageLoading = ref({})
 
 // Load data on mount
 onMounted(async () => {
@@ -91,6 +93,11 @@ const loadItem = async () => {
           form.value[field.key] = item[field.key]
           originalForm.value[field.key] = item[field.key]
         }
+        
+        // Load image preview for existing URLs
+        if (field.type === 'url' && item[field.key]) {
+          imagePreview.value[field.key] = item[field.key]
+        }
       })
       
       await Promise.all(
@@ -121,6 +128,61 @@ const retryLoad = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// Image handling
+const handleImageUpload = (field, event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // Validate file type
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+  if (!validTypes.includes(file.type)) {
+    errors.value[field.key] = 'Please upload a valid image file (jpg, png, gif, webp, svg)'
+    return
+  }
+
+  // Validate file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    errors.value[field.key] = 'Image size must be less than 5MB'
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    imagePreview.value[field.key] = e.target.result
+    form.value[field.key] = e.target.result
+    errors.value[field.key] = ''
+  }
+  reader.readAsDataURL(file)
+}
+
+const loadImagePreview = async (field, url) => {
+  if (!url) {
+    imagePreview.value[field.key] = null
+    return
+  }
+
+  imageLoading.value[field.key] = true
+  imagePreview.value[field.key] = url
+  
+  // Test if image loads
+  const img = new Image()
+  img.onload = () => {
+    imageLoading.value[field.key] = false
+  }
+  img.onerror = () => {
+    imageLoading.value[field.key] = false
+    imagePreview.value[field.key] = null
+    errors.value[field.key] = 'Failed to load image from URL'
+  }
+  img.src = url
+}
+
+const clearImage = (field) => {
+  form.value[field.key] = ''
+  imagePreview.value[field.key] = null
+  errors.value[field.key] = ''
 }
 
 // Validation
@@ -158,24 +220,64 @@ const validateField = async (field) => {
   }
 
   if (field.type === 'url' && value) {
-    const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i
+    // Allow base64 images from upload
+    if (value.startsWith('data:image/')) {
+      errors.value[field.key] = ''
+      return true
+    }
+
     const isAbsoluteUrl = value.startsWith('http://') || value.startsWith('https://')
     const isLocalPath = value.startsWith('/') || value.startsWith('./') || value.startsWith('../')
-    
-    // Check if it's a valid image extension
-    if (!imageExtensions.test(value)) {
-      errors.value[field.key] = 'URL must end with a valid image extension (.jpg, .png, .gif, .webp, .svg)'
-      return false
-    }
     
     if (isAbsoluteUrl) {
       try {
         new URL(value)
+        // Try to load the image to validate it
+        imageLoading.value[field.key] = true
+        const img = new Image()
+        
+        const loadPromise = new Promise((resolve, reject) => {
+          img.onload = () => {
+            imagePreview.value[field.key] = value
+            imageLoading.value[field.key] = false
+            errors.value[field.key] = ''
+            resolve(true)
+          }
+          img.onerror = () => {
+            imageLoading.value[field.key] = false
+            imagePreview.value[field.key] = null
+            errors.value[field.key] = 'Unable to load image from this URL. Please use a direct image link.'
+            reject(false)
+          }
+          // Set timeout
+          setTimeout(() => {
+            imageLoading.value[field.key] = false
+            reject(false)
+          }, 10000)
+        })
+        
+        img.src = value
+        
+        try {
+          await loadPromise
+          return true
+        } catch {
+          return false
+        }
       } catch {
         errors.value[field.key] = 'Please enter a valid URL'
         return false
       }
-    } else if (!isLocalPath) {
+    } else if (isLocalPath) {
+      // For local paths, check extension
+      const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?.*)?$/i
+      if (!imageExtensions.test(value)) {
+        errors.value[field.key] = 'Path must end with a valid image extension'
+        return false
+      }
+      // Load preview for local paths
+      await loadImagePreview(field, value)
+    } else {
       errors.value[field.key] = 'Please enter a valid URL or path (e.g., /images/cover.jpg)'
       return false
     }
@@ -221,8 +323,18 @@ const validateField = async (field) => {
 
 // Watch for field changes
 props.config.fields.forEach(field => {
-  if (field.type !== 'tags') {
+  if (field.type !== 'tags' && field.type !== 'url') {
     watch(() => form.value[field.key], () => validateField(field))
+  }
+  
+  // Watch URL fields for preview
+  if (field.type === 'url') {
+    watch(() => form.value[field.key], (newVal) => {
+      if (newVal && !newVal.startsWith('data:image/')) {
+        loadImagePreview(field, newVal)
+      }
+      validateField(field)
+    })
   }
 })
 
@@ -562,6 +674,7 @@ const cancel = () => {
                 <span class="label-text font-bold">
                   <i :class="[field.icon, 'text-primary mr-2']"></i>{{ field.label }}
                   <span v-if="field.maxItems">(Max {{ field.maxItems }})</span>
+                  <span v-if="field.required" class="text-error">*</span>
                 </span>
               </label>
               <div class="join">
@@ -606,6 +719,7 @@ const cancel = () => {
               <label class="label">
                 <span class="label-text font-bold">
                   <i :class="[field.icon, 'text-secondary mr-2']"></i>{{ field.label }}
+                  <span v-if="field.required" class="text-error">*</span>
                 </span>
               </label>
               <textarea
@@ -624,7 +738,7 @@ const cancel = () => {
               </label>
             </div>
 
-            <!-- URL -->
+            <!-- URL with Upload and Preview -->
             <div v-else-if="field.type === 'url'" class="form-control">
               <label class="label">
                 <span class="label-text font-bold">
@@ -632,20 +746,81 @@ const cancel = () => {
                   <span v-if="field.required" class="text-error">*</span>
                 </span>
               </label>
-              <input
-                v-model="form[field.key]"
-                type="text"
-                placeholder="https://example.com/image.jpg or /images/cover.jpg"
-                class="input input-bordered"
-                :class="errors[field.key] ? 'input-error' : ''"
-                @blur="validateField(field)"
-              />
+
+              <!-- URL Input -->
+              <div class="relative">
+                <input
+                  v-model="form[field.key]"
+                  type="text"
+                  placeholder="Paste direct image URL here..."
+                  class="input input-bordered w-full pr-10"
+                  :class="errors[field.key] ? 'input-error' : ''"
+                  @blur="validateField(field)"
+                />
+                <button
+                  v-if="form[field.key]"
+                  type="button"
+                  @click="validateField(field)"
+                  class="btn btn-ghost btn-sm btn-circle absolute right-2 top-1/2 -translate-y-1/2"
+                  title="Test image URL"
+                >
+                  <i class="fas fa-check-circle text-success"></i>
+                </button>
+              </div>
+
+              
+
+              <!-- Upload Button -->
+              <div class="mt-2">
+                <label class="btn btn-outline btn-sm gap-2">
+                  <i class="fas fa-upload"></i>
+                  Upload Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    class="hidden"
+                    @change="handleImageUpload(field, $event)"
+                  />
+                </label>
+                <button
+                  v-if="form[field.key]"
+                  type="button"
+                  @click="clearImage(field)"
+                  class="btn btn-ghost btn-sm gap-2 ml-2"
+                >
+                  <i class="fas fa-times"></i>
+                  Clear
+                </button>
+              </div>
+
+              <!-- Image Preview -->
+              <div v-if="imagePreview[field.key]" class="mt-4 p-4 bg-base-200 rounded-lg">
+                <p class="text-sm font-semibold mb-2">Preview:</p>
+                <div class="relative w-full max-w-xs mx-auto">
+                  <div v-if="imageLoading[field.key]" class="flex items-center justify-center h-48 bg-base-300 rounded-lg">
+                    <span class="loading loading-spinner loading-lg"></span>
+                  </div>
+                  <img
+                    v-else
+                    :src="imagePreview[field.key]"
+                    :alt="field.label"
+                    class="w-full h-auto rounded-lg shadow-lg"
+                    @error="imagePreview[field.key] = null"
+                  />
+                </div>
+              </div>
+
               <label class="label">
-                <span v-if="errors[field.key]" class="label-text-alt text-error">
+                <span v-if="errors[field.key]" class="label-text-alt text-error flex items-center gap-1">
+                  <i class="fas fa-exclamation-circle"></i>
                   {{ errors[field.key] }}
                 </span>
+                <span v-else-if="imagePreview[field.key] && !imageLoading[field.key]" class="label-text-alt text-success flex items-center gap-1">
+                  <i class="fas fa-check-circle"></i>
+                  Image loaded successfully
+                </span>
                 <span v-else class="label-text-alt text-base-content/60">
-                  Supported formats: .jpg, .jpeg, .png, .gif, .webp, .svg
+                  Or upload from your device (Max 5MB)
                 </span>
               </label>
             </div>

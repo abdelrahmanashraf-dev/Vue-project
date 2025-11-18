@@ -31,7 +31,7 @@ const showDeleteModal = ref(false)
 const itemToDelete = ref(null)
 const viewMode = ref('grid')
 const currentPage = ref(1)
-const itemsPerPage = ref(12) // 12 items per page for grid view
+const itemsPerPage = ref(8) // 12 items per page for grid view
 
 const toast = ref({
   show: false,

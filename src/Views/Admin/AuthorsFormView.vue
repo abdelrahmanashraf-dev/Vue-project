@@ -35,8 +35,26 @@ const authorFormConfig = {
       required: true,
       icon: 'fas fa-image'
     }
-  ]
+  ],
+  checkDuplicate: async (formData, store, currentId) => {
+    const authors = store.authors || []
+    const normalizedName = formData.name.trim().toLowerCase()
+    
+    const duplicate = authors.find(author => 
+      author.name.trim().toLowerCase() === normalizedName && 
+      author.id !== parseInt(currentId)
+    )
+    
+    if (duplicate) {
+      return 'An author with this name already exists'
+      
+    }
+    
+    return null
+  }
 }
+
+
 </script>
 
 <template>
